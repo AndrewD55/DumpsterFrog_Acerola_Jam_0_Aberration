@@ -16,6 +16,12 @@ var Colliding_ObjectNode_Current_Path:Node
 
 var manage_collision:bool=false
 
+func get_velocity() -> float:
+	return move_velocity
+
+func set_velocity(new_velocity) -> void:
+	move_velocity = new_velocity
+
 func _ready():
 	#assuming this is my Linked_Path3D, get the next_path_node now.
 	next_path_node = get_parent().get_exit_path_node()

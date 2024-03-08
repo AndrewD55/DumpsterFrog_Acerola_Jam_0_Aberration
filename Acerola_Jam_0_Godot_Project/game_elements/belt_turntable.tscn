@@ -22,7 +22,7 @@ albedo_color = Color(0.129412, 0.129412, 0.129412, 1)
 size = Vector3(0.25, 0.25, 0.1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_rnpag"]
-size = Vector3(1.1, 0.25, 0.75)
+size = Vector3(0.5, 0.5, 0.5)
 
 [node name="Belt_Turntable" type="StaticBody3D"]
 script = ExtResource("1_utw1d")
@@ -72,25 +72,53 @@ axis = 1
 texture = ExtResource("10_wiyli")
 
 [node name="Exiting_Object_Area_3D" type="Area3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -0.445073)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -0.441224)
 input_ray_pickable = false
 monitorable = false
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Exiting_Object_Area_3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.137648, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
 shape = SubResource("BoxShape3D_g4buf")
 
-[node name="Entrance_Serial_Object_Feed" type="Area3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0.15)
+[node name="Entrance_Speed_Override_Areas" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="North_Speed_Override" type="Area3D" parent="Entrance_Speed_Override_Areas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0.75)
 input_ray_pickable = false
-monitoring = false
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Entrance_Serial_Object_Feed"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.137648, 0)
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Entrance_Speed_Override_Areas/North_Speed_Override"]
+shape = SubResource("BoxShape3D_rnpag")
+
+[node name="East_Speed_Override" type="Area3D" parent="Entrance_Speed_Override_Areas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.75, 0.25, 0)
+input_ray_pickable = false
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Entrance_Speed_Override_Areas/East_Speed_Override"]
+shape = SubResource("BoxShape3D_rnpag")
+
+[node name="South_Speed_Override" type="Area3D" parent="Entrance_Speed_Override_Areas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, -0.75)
+input_ray_pickable = false
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Entrance_Speed_Override_Areas/South_Speed_Override"]
+shape = SubResource("BoxShape3D_rnpag")
+
+[node name="West_Speed_Override" type="Area3D" parent="Entrance_Speed_Override_Areas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, 0.25, 0)
+input_ray_pickable = false
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Entrance_Speed_Override_Areas/West_Speed_Override"]
 shape = SubResource("BoxShape3D_rnpag")
 
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
 [connection signal="area_entered" from="Exiting_Object_Area_3D" to="." method="_on_exiting_object_area_3d_area_entered"]
-[connection signal="area_entered" from="Entrance_Serial_Object_Feed" to="." method="_on_entrance_serial_object_feed_area_entered"]
+[connection signal="area_entered" from="Entrance_Speed_Override_Areas/North_Speed_Override" to="." method="_on_north_speed_override_area_entered"]
+[connection signal="area_entered" from="Entrance_Speed_Override_Areas/East_Speed_Override" to="." method="_on_east_speed_override_area_entered"]
+[connection signal="area_entered" from="Entrance_Speed_Override_Areas/South_Speed_Override" to="." method="_on_south_speed_override_area_entered"]
+[connection signal="area_entered" from="Entrance_Speed_Override_Areas/West_Speed_Override" to="." method="_on_west_speed_override_area_entered"]

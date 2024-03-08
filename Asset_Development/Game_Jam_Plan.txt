@@ -143,3 +143,18 @@ Game Start Menu
 
 Started development since most elements are defined and some exploration within the engine is required to make things work.
 This will also help me find the easy way and hard ways to make these game elements.
+
+
+--MAR02
+
+Worked mostly on teh On_Belt_Object and Linked Path3D objects to allow for long connected paths that may eventually be conveyors 
+
+
+--MAR03
+
+Worked more on the Turntable logic, 
+and I just realized I could've avoided alot of headache by making the Turntable belt more like the Merger/Splitters in Satisfactory.
+with just a black void the items go in and out of...  If the blocking logic appears to complicated I may have to resort to that.
+Soon I may sprint for a working prototype even if it sucks and try to fix the turntable serial input logic then... 
+
+

@@ -7,7 +7,6 @@ extends Path3D
 @export var ExitPathTurntable:Belt_Turntable_Path3D=null
 @export var ExitPathTurntable_EnterDirection:Belt_Turntable_Path3D.global_direction
 
-
 func set_exit_path_node(new_exit_path_node:Path3D) -> void:
 	ExitPathNode = new_exit_path_node
 

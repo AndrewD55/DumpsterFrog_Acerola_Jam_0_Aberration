@@ -1,5 +1,4 @@
 extends StaticBody3D
-
 class_name Belt_Turntable_Path3D
 
 @onready var Highlight = $Mouseover_Highlight
@@ -34,11 +33,18 @@ enum local_orientation {LEFT, RIGHT, FORWARD}
 @export var WEST_ExitPathNode:Path3D=null
 @export var WEST_Exit_local_orientation:local_orientation=local_orientation.FORWARD
 
+@export var Entrant_Resume_Velocity:float=1.0
+
 var current_ExitPathNode:Path3D=null
 
 var Exiting_ObjectNode:Node3D=null
 var Lock_Rotation:bool=false
-	
+
+var Entry_Direction_Queue = []
+var Entry_Direction_Nodes = []
+var Allow_Entrant:bool= true
+var Prev_Lock_Rotation:bool = false
+
 
 # HELPER FUNCTIONS
 func set_exitpath(After_Exit_PathNode:Path3D,After_Exit_Direction:local_orientation):
@@ -49,11 +55,17 @@ func set_exitpath(After_Exit_PathNode:Path3D,After_Exit_Direction:local_orientat
 			current_ExitPathNode=Right_ExitPathNode
 		local_orientation.FORWARD:
 			current_ExitPathNode=Forward_ExitPathNode
-	
-	Rear_EntrancePathNode.set_exit_path_node(current_ExitPathNode)
-	Left_EntrancePathNode.set_exit_path_node(current_ExitPathNode)
-	Right_EntrancePathNode.set_exit_path_node(current_ExitPathNode)
-	
+			
+	#if there's nowhere to exit.. don't allow the object to leave entrance paths
+	if After_Exit_PathNode != null:
+		Rear_EntrancePathNode.set_exit_path_node(current_ExitPathNode)
+		Left_EntrancePathNode.set_exit_path_node(current_ExitPathNode)
+		Right_EntrancePathNode.set_exit_path_node(current_ExitPathNode)
+	else:
+		Rear_EntrancePathNode.set_exit_path_node(null)
+		Left_EntrancePathNode.set_exit_path_node(null)
+		Right_EntrancePathNode.set_exit_path_node(null)
+		
 	current_ExitPathNode.set_exit_path_node(After_Exit_PathNode)
 
 func rotate_belt(LRMouse:int)->void:
@@ -130,13 +142,40 @@ func _physics_process(_delta):
 		Highlight.texture = RedHighlightTexture
 		#get current parent PathNode3D
 		var Exiting_Object_CurrentPathNode = Exiting_ObjectNode.get_parent()
+		
+		
 		#once it's on path OTHER THAN our entrance/exit path nodes, it must be on it's way. say goodbye!
-		if Exiting_Object_CurrentPathNode not in [Forward_ExitPathNode, Left_ExitPathNode, Right_ExitPathNode,Rear_EntrancePathNode,Left_EntrancePathNode,Right_EntrancePathNode]:
+		if Exiting_Object_CurrentPathNode not in [Forward_ExitPathNode, Left_ExitPathNode, Right_ExitPathNode,Rear_EntrancePathNode,Left_EntrancePathNode,Right_EntrancePathNode,null]:
 			Exiting_ObjectNode=null
 			Lock_Rotation = false
+			
+		#if object has no next path, I'd like to unlock rotation so it'll kickout next valid path.. 
+		elif  Exiting_ObjectNode.next_path_node == null:
+			print("OBJECT HAS NO NEXT PATH")
+			Lock_Rotation = false
+			
 	else:
 		Highlight.texture = GreenHighlightTexture
+			
+	#if Prev_Lock_Rotation == false and Lock_Rotation == true:
+		#Allow_Entrant = true
+		#After the lock rotation just ended, allow another object onto the belt
+		#this is also where a delay could be added for ease of use.
 
+	if Entry_Direction_Queue.size() > 0:
+		#print(Entry_Direction_Queue)
+		#print(Entry_Direction_Nodes)
+		Entry_Direction_Queue.pop_front()
+		var Entering_Node = Entry_Direction_Nodes.pop_front()
+		Entering_Node.set_velocity(Entrant_Resume_Velocity)
+		Allow_Entrant = false
+		#print("ALLOW ENTRANT")
+			
+			
+	Prev_Lock_Rotation = Lock_Rotation
+	
+	
+	
 # GODOT SIGNALS
 func _on_mouse_entered():
 	Highlight.visible = true
@@ -145,8 +184,9 @@ func _on_mouse_exited():
 	Highlight.visible = false
 	
 func _on_exiting_object_area_3d_area_entered(area):
-	Exiting_ObjectNode = area.get_parent()
-	Lock_Rotation = true
+		Exiting_ObjectNode = area.get_parent()
+		Lock_Rotation = true
+			
 	#When a belt object enters this area
 		#1.Get it's node
 		#2 Lock Rotation
@@ -154,16 +194,44 @@ func _on_exiting_object_area_3d_area_entered(area):
 		#2 Once it's exit path becomes it's parent, then get nextpath again.
 		#3 Once it's nextpath becomes it's parent forget it exists and unlock rotation
 		
-
-func _on_entrance_serial_object_feed_area_entered(area):
-	pass # Replace with function body.
 	#BUILD THIS NEXT
 	#When objects enter the belt there needs to be an order to admit them in
 	#So that the player has time to make a decision out of the possible input three objects where each should go.
 	# so I need 3 different blockers, not just one.
 	# I likely make up an order to admit each object, and still allow for rotation during the entry path
 	# may need a speed override if that decision is far too fast for normal reflexes.
-	
+func _on_north_speed_override_area_entered(area):
+	if Turntable_Global_Direction != global_direction.NORTH_ZPOS:
+		if area.is_in_group("OnBeltObjects"):
+			Entry_Direction_Queue.push_back(global_direction.NORTH_ZPOS)
+			var north_entrant = area.get_parent()
+			Entry_Direction_Nodes.push_back(north_entrant)
+			north_entrant.set_velocity(0.1)
+		
+func _on_east_speed_override_area_entered(area):
+	if Turntable_Global_Direction != global_direction.EAST_XNEG:
+		if area.is_in_group("OnBeltObjects"):
+			Entry_Direction_Queue.push_back(global_direction.EAST_XNEG)
+			var east_entrant = area.get_parent()
+			Entry_Direction_Nodes.push_back(east_entrant)
+			east_entrant.set_velocity(0.1)
+
+func _on_south_speed_override_area_entered(area):
+	if Turntable_Global_Direction != global_direction.SOUTH_ZNEG:
+		if area.is_in_group("OnBeltObjects"):
+			Entry_Direction_Queue.push_back(global_direction.SOUTH_ZNEG)
+			var south_entrant = area.get_parent()
+			Entry_Direction_Nodes.push_back(south_entrant)
+			south_entrant.set_velocity(0.1)
+
+func _on_west_speed_override_area_entered(area):
+	if Turntable_Global_Direction != global_direction.WEST_XPOS:
+		if area.is_in_group("OnBeltObjects"):
+			Entry_Direction_Queue.push_back(global_direction.WEST_XPOS)
+			var west_entrant = area.get_parent()
+			Entry_Direction_Nodes.push_back(west_entrant)
+			west_entrant.set_velocity(0.1)
+
 	
 
 func get_turntable_entrance(Incoming_Obj_Global_Direction:global_direction):
@@ -214,9 +282,3 @@ func get_turntable_entrance(Incoming_Obj_Global_Direction:global_direction):
 					global_direction.WEST_XPOS:
 						EntrancePathNode=Left_EntrancePathNode
 	return EntrancePathNode
-	
-
-
-
-
-
