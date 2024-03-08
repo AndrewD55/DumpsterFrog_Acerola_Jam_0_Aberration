@@ -1,0 +1,36 @@
+[gd_scene load_steps=7 format=3 uid="uid://cwl267b67uw75"]
+
+[ext_resource type="Script" path="res://game_elements/belt_object_spawner.gd" id="1_0jjlj"]
+[ext_resource type="PackedScene" uid="uid://crho7h6t4w6x7" path="res://composition_modules/Linked_Path3D.tscn" id="2_uffvu"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_gurqk"]
+size = Vector3(1, 2, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_7rb28"]
+size = Vector3(1, 2, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jgy2a"]
+albedo_color = Color(0.192157, 0.337255, 0.192157, 1)
+
+[sub_resource type="Curve3D" id="Curve3D_807b7"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, -0.5, 0, 0, 0, 0, 0, 0, 0, 0, 1),
+"tilts": PackedFloat32Array(0, 0)
+}
+point_count = 2
+
+[node name="belt_object_spawner" type="StaticBody3D"]
+script = ExtResource("1_0jjlj")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("BoxShape3D_gurqk")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("BoxMesh_7rb28")
+surface_material_override/0 = SubResource("StandardMaterial3D_jgy2a")
+
+[node name="Spawn_Shute" parent="." instance=ExtResource("2_uffvu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+curve = SubResource("Curve3D_807b7")

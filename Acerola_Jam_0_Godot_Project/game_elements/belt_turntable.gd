@@ -48,7 +48,7 @@ func set_thrupaths_exit_shute(Exit_Shute:Path3D):
 	Left_Thru_Path.set_exit_path_node(Exit_Shute)
 	Right_Thru_Path.set_exit_path_node(Exit_Shute)
 	
-func set_enter_shutes_thru_paths_exit_shutes(current_direction:global_direction):
+func set_enter_shutes_thru_paths_exit_shutes()->void:
 	match Turntable_Global_Direction:
 		global_direction.NORTH_ZPOS:#^
 			North_Enter_Shute.set_exit_path_node(null)
@@ -126,13 +126,13 @@ func rotate_belt(LRMouse:int)->void:
 					Turntable_Global_Direction = global_direction.NORTH_ZPOS
 					BeltMesh.rotate_object_local(Vector3(0,1,0),-PI/2)
 	#Update all Enter_Shutes -> Thru_Paths -> Exit_Shutes with new Turntable Global Direction
-	set_enter_shutes_thru_paths_exit_shutes(Turntable_Global_Direction)
+	set_enter_shutes_thru_paths_exit_shutes()
 
 
 # NORMAL INIT/INPUT/MAIN LOGIC
 func _ready():
 	#set initial parameters
-	set_enter_shutes_thru_paths_exit_shutes(Turntable_Global_Direction)
+	set_enter_shutes_thru_paths_exit_shutes()
 	#Set Exit Shutes Destinations
 	if NORTH_Destination != null:
 		North_Exit_Shute.set_exit_path_node(NORTH_Destination)
