@@ -3,7 +3,6 @@ class_name Belt_Turntable_Path3D
 
 @onready var Highlight = $Mouseover_Highlight
 var GreenHighlightTexture:Texture2D = load("res://2D_Media/Sprites/Mouseover_Highlight_V0_Green.png")
-var RedHighlightTexture:Texture2D = load("res://2D_Media/Sprites/Mouseover_Highlight_V0_Red.png")
 
 @onready var BeltMesh = $MeshInstance3D
 

@@ -14,7 +14,7 @@ albedo_color = Color(0.192157, 0.337255, 0.192157, 1)
 
 [sub_resource type="Curve3D" id="Curve3D_807b7"]
 _data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, -0.5, 0, 0, 0, 0, 0, 0, 0, 0, 1),
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, -0.28, 0, 0, 0, 0, 0, 0, 0, 0, 1),
 "tilts": PackedFloat32Array(0, 0)
 }
 point_count = 2
@@ -34,3 +34,21 @@ surface_material_override/0 = SubResource("StandardMaterial3D_jgy2a")
 [node name="Spawn_Shute" parent="." instance=ExtResource("2_uffvu")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 curve = SubResource("Curve3D_807b7")
+
+[node name="Path3D_Graphical" type="Path3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+curve = SubResource("Curve3D_807b7")
+
+[node name="CSGPolygon3D_BeltShape" type="CSGPolygon3D" parent="Path3D_Graphical"]
+snap = 1e-06
+polygon = PackedVector2Array(-0.5, -0.05, -0.45, 0, 0.45, 0, 0.5, -0.05)
+mode = 2
+path_node = NodePath("..")
+path_interval_type = 0
+path_interval = 1.0
+path_simplify_angle = 0.0
+path_rotation = 1
+path_local = true
+path_continuous_u = true
+path_u_distance = 1.0
+path_joined = false

@@ -14,7 +14,6 @@ var Bad_Product = preload("res://3D_Media/Bad_Product/Bad_Donut_V0.glb").instant
 @export var follow_collision_distance:float=0.75
 var move_velocity:float
 
-var belt_object_type:enum_belt_object_type=initial_object_type
 var next_path_node:Node=null
 
 var Ahead_Colliding_ObjectNode:Node=null

@@ -1,0 +1,23 @@
+[gd_scene load_steps=3 format=3 uid="uid://bjlnaliaoxaam"]
+
+[ext_resource type="Script" path="res://composition_modules/Linked_Path3D.gd" id="1_7dmnj"]
+
+[sub_resource type="Curve3D" id="Curve3D_4relk"]
+
+[node name="Conveyor_LinkedPath3D" type="Path3D"]
+curve = SubResource("Curve3D_4relk")
+script = ExtResource("1_7dmnj")
+
+[node name="CSGPolygon3D_BeltShape" type="CSGPolygon3D" parent="."]
+snap = 1e-06
+polygon = PackedVector2Array(-0.5, -0.05, -0.45, 0, 0.45, 0, 0.5, -0.05)
+mode = 2
+path_node = NodePath("..")
+path_interval_type = 0
+path_interval = 0.1
+path_simplify_angle = 0.0
+path_rotation = 2
+path_local = true
+path_continuous_u = true
+path_u_distance = 1.0
+path_joined = false

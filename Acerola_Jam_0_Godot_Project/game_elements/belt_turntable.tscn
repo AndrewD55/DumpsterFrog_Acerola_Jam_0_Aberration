@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://dok0pyvneckou"]
+[gd_scene load_steps=22 format=3 uid="uid://dok0pyvneckou"]
 
 [ext_resource type="Script" path="res://game_elements/belt_turntable.gd" id="1_utw1d"]
 [ext_resource type="PackedScene" uid="uid://crho7h6t4w6x7" path="res://composition_modules/Linked_Path3D.tscn" id="2_7w5hh"]
@@ -54,6 +54,34 @@ point_count = 2
 [sub_resource type="Curve3D" id="Curve3D_b2evr"]
 _data = {
 "points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.15),
+"tilts": PackedFloat32Array(0, 0)
+}
+point_count = 2
+
+[sub_resource type="Curve3D" id="Curve3D_ohyja"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, -0.25, 0, 0, 0, 0, 0, 0, 0, 0, 0.25),
+"tilts": PackedFloat32Array(0, 0)
+}
+point_count = 2
+
+[sub_resource type="Curve3D" id="Curve3D_fnlr3"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, -0.25, 0, 0, 0, 0, 0, 0, 0, 0, 0.25),
+"tilts": PackedFloat32Array(0, 0)
+}
+point_count = 2
+
+[sub_resource type="Curve3D" id="Curve3D_e76vg"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, -0.25, 0, 0, 0, 0, 0, 0, 0, 0, 0.25),
+"tilts": PackedFloat32Array(0, 0)
+}
+point_count = 2
+
+[sub_resource type="Curve3D" id="Curve3D_edkil"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, -0.25, 0, 0, 0, 0, 0, 0, 0, 0, 0.25),
 "tilts": PackedFloat32Array(0, 0)
 }
 point_count = 2
@@ -146,6 +174,82 @@ curve = ExtResource("8_g23qn")
 [node name="West_Exit_Shute" parent="Exit_Shutes" instance=ExtResource("2_7w5hh")]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0.75, 0, 0)
 curve = ExtResource("8_g23qn")
+
+[node name="Graphical_Paths_PLEASE_DONT_USE" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+visible = false
+
+[node name="North_Graphical" parent="Graphical_Paths_PLEASE_DONT_USE" instance=ExtResource("2_7w5hh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.75)
+curve = SubResource("Curve3D_ohyja")
+
+[node name="CSGPolygon3D_BeltShape" type="CSGPolygon3D" parent="Graphical_Paths_PLEASE_DONT_USE/North_Graphical"]
+snap = 1e-06
+polygon = PackedVector2Array(-0.5, -0.05, -0.45, 0, 0.45, 0, 0.5, -0.05)
+mode = 2
+path_node = NodePath("..")
+path_interval_type = 0
+path_interval = 1.0
+path_simplify_angle = 0.0
+path_rotation = 2
+path_local = true
+path_continuous_u = true
+path_u_distance = 1.0
+path_joined = false
+
+[node name="East_Graphical" parent="Graphical_Paths_PLEASE_DONT_USE" instance=ExtResource("2_7w5hh")]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -0.75, 0, 0)
+curve = SubResource("Curve3D_fnlr3")
+
+[node name="CSGPolygon3D_BeltShape" type="CSGPolygon3D" parent="Graphical_Paths_PLEASE_DONT_USE/East_Graphical"]
+snap = 1e-06
+polygon = PackedVector2Array(-0.5, -0.05, -0.45, 0, 0.45, 0, 0.5, -0.05)
+mode = 2
+path_node = NodePath("..")
+path_interval_type = 0
+path_interval = 1.0
+path_simplify_angle = 0.0
+path_rotation = 2
+path_local = true
+path_continuous_u = true
+path_u_distance = 1.0
+path_joined = false
+
+[node name="South_Graphical" parent="Graphical_Paths_PLEASE_DONT_USE" instance=ExtResource("2_7w5hh")]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, 0, -0.75)
+curve = SubResource("Curve3D_e76vg")
+
+[node name="CSGPolygon3D_BeltShape" type="CSGPolygon3D" parent="Graphical_Paths_PLEASE_DONT_USE/South_Graphical"]
+snap = 1e-06
+polygon = PackedVector2Array(-0.5, -0.05, -0.45, 0, 0.45, 0, 0.5, -0.05)
+mode = 2
+path_node = NodePath("..")
+path_interval_type = 0
+path_interval = 1.0
+path_simplify_angle = 0.0
+path_rotation = 2
+path_local = true
+path_continuous_u = true
+path_u_distance = 1.0
+path_joined = false
+
+[node name="West_Graphical" parent="Graphical_Paths_PLEASE_DONT_USE" instance=ExtResource("2_7w5hh")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0.75, 0, 0)
+curve = SubResource("Curve3D_edkil")
+
+[node name="CSGPolygon3D_BeltShape" type="CSGPolygon3D" parent="Graphical_Paths_PLEASE_DONT_USE/West_Graphical"]
+snap = 1e-06
+polygon = PackedVector2Array(-0.5, -0.05, -0.45, 0, 0.45, 0, 0.5, -0.05)
+mode = 2
+path_node = NodePath("..")
+path_interval_type = 0
+path_interval = 1.0
+path_simplify_angle = 0.0
+path_rotation = 2
+path_local = true
+path_continuous_u = true
+path_u_distance = 1.0
+path_joined = false
 
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
