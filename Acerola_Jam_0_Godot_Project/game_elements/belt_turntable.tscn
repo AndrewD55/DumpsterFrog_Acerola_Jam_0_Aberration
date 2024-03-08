@@ -7,6 +7,9 @@
 [ext_resource type="Curve3D" uid="uid://dya28qelk13vt" path="res://game_elements/belt_turntable_entrance_rear_curve3d.tres" id="3_nd0uo"]
 [ext_resource type="Curve3D" uid="uid://daga0jiq0ilrj" path="res://game_elements/belt_turntable_entrance_right_curve3d.tres" id="4_cys10"]
 [ext_resource type="Curve3D" uid="uid://bmu1jt0mj3biu" path="res://game_elements/belt_turntable_entrance_left_curve3d.tres" id="5_oy1c7"]
+[ext_resource type="Curve3D" uid="uid://bhuu7lh3osdmv" path="res://game_elements/belt_turntable_exit_forward_curve3d.tres" id="6_h21qr"]
+[ext_resource type="Curve3D" uid="uid://bn4c7iv1vpek" path="res://game_elements/belt_turntable_exit_left_curve3d.tres" id="7_ss6wc"]
+[ext_resource type="Curve3D" uid="uid://dg6y5knyym7tu" path="res://game_elements/belt_turntable_exit_right_curve3d.tres" id="8_tlm8t"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_it444"]
 
@@ -14,27 +17,6 @@
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nrd52"]
 albedo_color = Color(0.129412, 0.129412, 0.129412, 1)
-
-[sub_resource type="Curve3D" id="Curve3D_hlrdh"]
-_data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-"tilts": PackedFloat32Array(0, 0)
-}
-point_count = 2
-
-[sub_resource type="Curve3D" id="Curve3D_aahi1"]
-_data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, -0.5, 0, 0, 0.5, 0.5, 0, 0, 0, 0, 0, -0.5, 0, 0),
-"tilts": PackedFloat32Array(0, 0)
-}
-point_count = 2
-
-[sub_resource type="Curve3D" id="Curve3D_v0t50"]
-_data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, -0.5, 0, 0, 0.5, -0.5, 0, 0, 0, 0, 0, 0.5, 0, 0),
-"tilts": PackedFloat32Array(0, 0)
-}
-point_count = 2
 
 [node name="Belt_Turntable" type="StaticBody3D"]
 script = ExtResource("1_utw1d")
@@ -63,14 +45,14 @@ curve = ExtResource("5_oy1c7")
 [node name="Exit_Path" type="Node3D" parent="MeshInstance3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -1)
 
-[node name="Forward_Exit_Path" type="Path3D" parent="MeshInstance3D/Exit_Path"]
-curve = SubResource("Curve3D_hlrdh")
+[node name="Forward_Exit_Path" parent="MeshInstance3D/Exit_Path" instance=ExtResource("2_7w5hh")]
+curve = ExtResource("6_h21qr")
 
-[node name="Left_Exit_Path" type="Path3D" parent="MeshInstance3D/Exit_Path"]
-curve = SubResource("Curve3D_aahi1")
+[node name="Left_Exit_Path" parent="MeshInstance3D/Exit_Path" instance=ExtResource("2_7w5hh")]
+curve = ExtResource("7_ss6wc")
 
-[node name="Right_Exit_Path" type="Path3D" parent="MeshInstance3D/Exit_Path"]
-curve = SubResource("Curve3D_v0t50")
+[node name="Right_Exit_Path" parent="MeshInstance3D/Exit_Path" instance=ExtResource("2_7w5hh")]
+curve = ExtResource("8_tlm8t")
 
 [node name="Arrow" type="Sprite3D" parent="MeshInstance3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.511285, 0)

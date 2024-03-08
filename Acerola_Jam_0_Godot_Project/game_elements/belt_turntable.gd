@@ -9,8 +9,10 @@ class_name Belt_Turntable_Path3D
 @onready var Left_EntrancePathNode = $MeshInstance3D/Entrance_Path/Left_Entrance_Path
 @onready var Right_EntrancePathNode = $MeshInstance3D/Entrance_Path/Right_Entrance_Path
 
+@onready var Forward_ExitPathNode = $MeshInstance3D/Exit_Path/Forward_Exit_Path
+@onready var Left_ExitPathNode = $MeshInstance3D/Exit_Path/Left_Exit_Path
+@onready var Right_ExitPathNode = $MeshInstance3D/Exit_Path/Right_Exit_Path
 
-@onready var ExitEntrancePathNode = $MeshInstance3D/Entrance_Path/Left_Entrance_Path
 
 
 enum global_direction {NORTH_ZPOS, EAST_XNEG, SOUTH_ZNEG, WEST_XPOS }
@@ -19,65 +21,108 @@ enum local_orientation {LEFT, RIGHT, FORWARD}
 @export var Turntable_Global_Direction:global_direction
 
 
-#offset position to unload objects onto Left_ExitPathNode
-@export var Left_ExitPathNode:Path3D=null
-@export var Left_Exit_local_orientation:local_orientation=local_orientation.FORWARD
-@export var Left_Exit_Position_Override:float=0.5
+#offset position to unload objects onto NORTH_ExitPathNode
+@export var NORTH_ExitPathNode:Path3D=null
+@export var NORTH_Exit_local_orientation:local_orientation=local_orientation.FORWARD
+#@export var NORTH_Exit_Position_Override:float=0.5
 
-#offset position to unload objects onto Forward_ExitPathNode
-@export var Forward_ExitPathNode:Path3D=null
-@export var Forward_Exit_local_orientation:local_orientation=local_orientation.FORWARD
-@export var Forward_Exit_Position_Override:float=0.5
+#offset position to unload objects onto EAST_ExitPathNode
+@export var EAST_ExitPathNode:Path3D=null
+@export var EAST_Exit_local_orientation:local_orientation=local_orientation.FORWARD
+#@export var EAST_Exit_Position_Override:float=0.5
 
-#offset position to unload objects onto Right_ExitPathNode
-@export var Right_ExitPathNode:Path3D=null
-@export var Right_Exit_local_orientation:local_orientation=local_orientation.FORWARD
-@export var Right_Exit_Position_Override:float=0.5
+#offset position to unload objects onto SOUTH_ExitPathNode
+@export var SOUTH_ExitPathNode:Path3D=null
+@export var SOUTH_Exit_local_orientation:local_orientation=local_orientation.FORWARD
+#@export var SOUTH_Exit_Position_Override:float=0.5
 
+#offset position to unload objects onto WEST_ExitPathNode
+@export var WEST_ExitPathNode:Path3D=null
+@export var WEST_Exit_local_orientation:local_orientation=local_orientation.FORWARD
+#@export var WEST_Exit_Position_Override:float=0.5
 
 
 var current_ExitPathNode:Path3D=null
-var current_Exit_local_orientation:local_orientation=local_orientation.FORWARD
-var current_Exit_Position_Override:float=0.0
+#var current_Exit_local_orientation:local_orientation=local_orientation.FORWARD
+#var current_Exit_Position_Override:float=0.0
 
 
-func rotate_belt(LRMouse:int):
+func set_exitpath(After_Exit_PathNode:Path3D,After_Exit_Direction:local_orientation):
+	match After_Exit_Direction:
+		local_orientation.LEFT:
+			current_ExitPathNode=Left_ExitPathNode
+		local_orientation.RIGHT:
+			current_ExitPathNode=Right_ExitPathNode
+		local_orientation.FORWARD:
+			current_ExitPathNode=Forward_ExitPathNode
+
+	Rear_EntrancePathNode.set_exit_path_node(current_ExitPathNode)
+	Left_EntrancePathNode.set_exit_path_node(current_ExitPathNode)
+	Right_EntrancePathNode.set_exit_path_node(current_ExitPathNode)
+	
+	current_ExitPathNode.set_exit_path_node(After_Exit_PathNode)
+
+
+func rotate_belt(LRMouse:int)->void:
+	#rotate belt model and set Turntable_Global_Direction for proper input directions
 	match Turntable_Global_Direction:
 		global_direction.NORTH_ZPOS:#^
 			match LRMouse:
 				1:#rotate left
 					Turntable_Global_Direction = global_direction.WEST_XPOS
+					self.set_exitpath(WEST_ExitPathNode,WEST_Exit_local_orientation)
 					self.rotate_object_local(Vector3(0,1,0),PI/2)
 				2:#rotate right
 					Turntable_Global_Direction = global_direction.EAST_XNEG
+					self.set_exitpath(EAST_ExitPathNode,EAST_Exit_local_orientation)
 					self.rotate_object_local(Vector3(0,1,0),-PI/2)
 		global_direction.EAST_XNEG:#>
 			match LRMouse:
 				1:#rotate left
 					Turntable_Global_Direction = global_direction.NORTH_ZPOS
+					self.set_exitpath(NORTH_ExitPathNode,NORTH_Exit_local_orientation)
 					self.rotate_object_local(Vector3(0,1,0),PI/2)
 				2:#rotate right
 					Turntable_Global_Direction = global_direction.SOUTH_ZNEG
+					self.set_exitpath(SOUTH_ExitPathNode,SOUTH_Exit_local_orientation)
 					self.rotate_object_local(Vector3(0,1,0),-PI/2)
 		global_direction.SOUTH_ZNEG:#v
 			match LRMouse:
 				1:#rotate left
 					Turntable_Global_Direction = global_direction.EAST_XNEG
+					self.set_exitpath(EAST_ExitPathNode,EAST_Exit_local_orientation)
 					self.rotate_object_local(Vector3(0,1,0),PI/2)
 				2:#rotate right
 					Turntable_Global_Direction = global_direction.WEST_XPOS
+					self.set_exitpath(WEST_ExitPathNode,WEST_Exit_local_orientation)
 					self.rotate_object_local(Vector3(0,1,0),-PI/2)
 		global_direction.WEST_XPOS:#<
 			match LRMouse:
 				1:#rotate left
 					Turntable_Global_Direction = global_direction.SOUTH_ZNEG
+					self.set_exitpath(SOUTH_ExitPathNode,SOUTH_Exit_local_orientation)
 					self.rotate_object_local(Vector3(0,1,0),PI/2)
 				2:#rotate right
 					Turntable_Global_Direction = global_direction.NORTH_ZPOS
+					self.set_exitpath(NORTH_ExitPathNode,NORTH_Exit_local_orientation)
 					self.rotate_object_local(Vector3(0,1,0),-PI/2)
 
 func _ready():
-	pass
+	#set initial exit parameters
+	match Turntable_Global_Direction:
+		global_direction.NORTH_ZPOS:#^
+			self.set_exitpath(NORTH_ExitPathNode,NORTH_Exit_local_orientation)
+		global_direction.EAST_XNEG:#>
+			self.set_exitpath(EAST_ExitPathNode,EAST_Exit_local_orientation)
+		global_direction.SOUTH_ZNEG:#v
+			self.set_exitpath(SOUTH_ExitPathNode,SOUTH_Exit_local_orientation)
+		global_direction.WEST_XPOS:#<
+			self.set_exitpath(WEST_ExitPathNode,WEST_Exit_local_orientation)
+
+
+				
+
+
 		
 
 func _input(event):

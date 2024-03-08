@@ -14,13 +14,8 @@ func _ready():
 	#make sure the object doesn't return to the start of the belt segment
 	self.loop = false 
 
-
-
-
 func _physics_process(delta):
-
 	self.progress += initial_velocity*delta
-
 	#at end of path, reparent and get next planned parent
 	if self.progress_ratio == 1.0:
 		if next_path_node != null:
