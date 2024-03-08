@@ -52,17 +52,17 @@ func set_enter_shutes_thru_paths_exit_shutes()->void:
 		global_direction.NORTH_ZPOS:#^
 			North_Enter_Shute.set_exit_path_node(null)
 			East_Enter_Shute.set_exit_path_node(Right_Thru_Path)
-			South_Enter_Shute.set_exit_path_node(Left_Thru_Path)
-			West_Enter_Shute.set_exit_path_node(Rear_Thru_Path)
+			South_Enter_Shute.set_exit_path_node(Rear_Thru_Path)
+			West_Enter_Shute.set_exit_path_node(Left_Thru_Path)
 			if NORTH_Destination != null:
 				set_thrupaths_exit_shute(North_Exit_Shute)
 			else:
 				set_thrupaths_exit_shute(null)
 		global_direction.EAST_XNEG:#>
 			North_Enter_Shute.set_exit_path_node(Left_Thru_Path)
-			East_Enter_Shute.set_exit_path_node(Rear_Thru_Path)
+			East_Enter_Shute.set_exit_path_node(null)
 			South_Enter_Shute.set_exit_path_node(Right_Thru_Path)
-			West_Enter_Shute.set_exit_path_node(null)
+			West_Enter_Shute.set_exit_path_node(Rear_Thru_Path)
 			if EAST_Destination != null:
 				set_thrupaths_exit_shute(East_Exit_Shute)
 			else:
@@ -78,9 +78,9 @@ func set_enter_shutes_thru_paths_exit_shutes()->void:
 				set_thrupaths_exit_shute(null)
 		global_direction.WEST_XPOS:#<
 			North_Enter_Shute.set_exit_path_node(Right_Thru_Path)
-			East_Enter_Shute.set_exit_path_node(null)
-			South_Enter_Shute.set_exit_path_node(Rear_Thru_Path)
-			West_Enter_Shute.set_exit_path_node(Left_Thru_Path)
+			East_Enter_Shute.set_exit_path_node(Rear_Thru_Path)
+			South_Enter_Shute.set_exit_path_node(Left_Thru_Path)
+			West_Enter_Shute.set_exit_path_node(null)
 			if WEST_Destination != null:
 				set_thrupaths_exit_shute(West_Exit_Shute)
 			else:
