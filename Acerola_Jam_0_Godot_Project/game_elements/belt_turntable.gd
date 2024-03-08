@@ -150,7 +150,7 @@ func _physics_process(_delta):
 			Lock_Rotation = false
 			Cannot_Exit_Invalid_Exit_Path = false
 			
-		#if object has no next path, I'd like to unlock rotation so it'll kickout next valid path.. 
+		#if object has no next path (or just an exit path), I'd like to unlock rotation so it'll kickout next valid path.. 
 		elif  Exiting_ObjectNode.next_path_node == null:
 			Lock_Rotation = false
 			Cannot_Exit_Invalid_Exit_Path = true
@@ -167,15 +167,15 @@ func _physics_process(_delta):
 	
 	if Entry_Direction_Queue.size() > 0:
 		if Allow_Entrant == true:
-			print(Entry_Direction_Queue)
-			print(Entry_Direction_Nodes)
+			#print(Entry_Direction_Queue)
+			#print(Entry_Direction_Nodes)
 			var Entering_Direction =Entry_Direction_Queue.pop_front()
 			var Entering_Node  = Entry_Direction_Nodes.pop_front()
 			Entering_Node.set_velocity(Entrant_Resume_Velocity)
 			Allow_Entrant = false
-			print("ALLOW ENTRANT")
-			print(Entering_Direction)
-			print(Entering_Node)
+			#print("ALLOW ENTRANT")
+			#print(Entering_Direction)
+			#print(Entering_Node)
 			
 			
 	Prev_Lock_Rotation = Lock_Rotation

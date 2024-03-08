@@ -12,9 +12,11 @@ var belt_object_type:enum_belt_object_type=initial_object_type
 var next_path_node:Node=null
 
 var Colliding_ObjectNode:Node
-var Colliding_ObjectNode_Current_Path:Node
 
 var manage_collision:bool=false
+var match_front_obj_velocity:bool = false
+var am_behind_suppress_collision = false
+
 
 func get_velocity() -> float:
 	return move_velocity
@@ -33,9 +35,11 @@ func _ready():
 enum enum_collision_order {UNDEF, AHEAD, BEHIND}
 var Collision_Order:enum_collision_order=enum_collision_order.UNDEF
 
+
 func _physics_process(delta):
 	if manage_collision == true:
 		var Collision_Distance:float = 0.0
+		
 		if Collision_Order == enum_collision_order.UNDEF:
 			#get other collider's direction relative to my local Z+ axis
 			var Collision_Position_Difference = Colliding_ObjectNode.global_transform.origin - self.global_transform.origin
@@ -49,17 +53,33 @@ func _physics_process(delta):
 		#get distance between this collider's origin and the other collider
 		Collision_Distance = Colliding_ObjectNode.global_transform.origin.distance_to(self.global_transform.origin)
 
+		print("Collision")
+		print(self)
+		print(Collision_Distance)
+		print(Collision_Order)
+
 		#if this is the collider behind another object, delay until enough distance is in between
 		if Collision_Order == enum_collision_order.BEHIND: #we are behind
-			move_velocity = -0.001 #may fix issues where two objects are perfectly backed into eachother
+			am_behind_suppress_collision = true
+			
+			if match_front_obj_velocity == false:
+				move_velocity = Colliding_ObjectNode.move_velocity - 0.1
+				match_front_obj_velocity = true
+			#Don't stop entirely, just slow down for now and speed up once distance is reached.
+			
 			if Collision_Distance > follow_collision_distance:
 				move_velocity = initial_velocity
+				am_behind_suppress_collision = false
 				manage_collision = false
 				Collision_Order = enum_collision_order.UNDEF
+				Colliding_ObjectNode = null
+				
 		#if this is the collider ahead of another object, carry on
 		elif Collision_Order == enum_collision_order.AHEAD: 
+			am_behind_suppress_collision = false
 			manage_collision = false
 			Collision_Order = enum_collision_order.UNDEF
+			Colliding_ObjectNode = null
 
 	self.progress += move_velocity*delta
 
@@ -80,5 +100,10 @@ func _physics_process(delta):
 func _on_area_3d_area_entered(area):
 	#handle collisions with other objects.  Should be rare, but possible
 	if area.is_in_group("OnBeltObjects"):
-		Colliding_ObjectNode = area.get_parent()
-		manage_collision = true
+		if am_behind_suppress_collision == false:
+			Colliding_ObjectNode = area.get_parent()
+			manage_collision = true
+
+
+#func _on_area_3d_area_exited(area):
+	#pass # Replace with function body.
