@@ -28,6 +28,7 @@ func _physics_process(delta):
 			next_path_node = get_parent().get_exit_path_node()
 			self.progress_ratio = 0.0
 		else:
-			pass
+			initial_velocity = 0
+			#stop for now?
 			#eventually I'd like the object to just limply fall
 			

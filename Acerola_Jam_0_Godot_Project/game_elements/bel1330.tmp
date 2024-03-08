@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://dok0pyvneckou"]
+[gd_scene load_steps=10 format=3 uid="uid://dok0pyvneckou"]
 
 [ext_resource type="Script" path="res://game_elements/belt_turntable.gd" id="1_utw1d"]
 [ext_resource type="Texture2D" uid="uid://bs3pm4y6j58h4" path="res://2D_Media/Sprites/Temp_Direction_Arrow_V0.png" id="2_b20g6"]
@@ -13,7 +13,7 @@ albedo_color = Color(0.129412, 0.129412, 0.129412, 1)
 
 [sub_resource type="Curve3D" id="Curve3D_3cfos"]
 _data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, -0.5),
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1),
 "tilts": PackedFloat32Array(0, 0)
 }
 point_count = 2
@@ -32,36 +32,8 @@ _data = {
 }
 point_count = 2
 
-[sub_resource type="Curve3D" id="Curve3D_hlrdh"]
-_data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-"tilts": PackedFloat32Array(0, 0)
-}
-point_count = 2
-
-[sub_resource type="Curve3D" id="Curve3D_aahi1"]
-_data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, -0.5, 0, 0, 0.5, 0.5, 0, 0, 0, 0, 0, -0.5, 0, 0),
-"tilts": PackedFloat32Array(0, 0)
-}
-point_count = 2
-
-[sub_resource type="Curve3D" id="Curve3D_v0t50"]
-_data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, -0.5, 0, 0, 0.5, -0.5, 0, 0, 0, 0, 0, 0.5, 0, 0),
-"tilts": PackedFloat32Array(0, 0)
-}
-point_count = 2
-
 [node name="Belt_Turntable" type="StaticBody3D"]
 script = ExtResource("1_utw1d")
-Left_Exit_Orientation = null
-Left_Exit_Position_Override = null
-Forward_Exit_Orientation = null
-Forward_Exit_Position_Override = null
-Right_Exit_Orientation = null
-Right_Exit_Position_Override = null
-Initial_Exit_Orientation = null
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
@@ -73,28 +45,19 @@ mesh = SubResource("BoxMesh_tlm7r")
 surface_material_override/0 = SubResource("StandardMaterial3D_nrd52")
 
 [node name="Entrance_Path" type="Node3D" parent="MeshInstance3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
 
 [node name="Forward_Entrance_Path" type="Path3D" parent="MeshInstance3D/Entrance_Path"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0.5)
 curve = SubResource("Curve3D_3cfos")
 
 [node name="Left_Entrance_Path" type="Path3D" parent="MeshInstance3D/Entrance_Path"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 curve = SubResource("Curve3D_g1bua")
 
 [node name="Right_Entrance_Path" type="Path3D" parent="MeshInstance3D/Entrance_Path"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 curve = SubResource("Curve3D_hd1h3")
-
-[node name="Exit_Path" type="Node3D" parent="MeshInstance3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -1)
-
-[node name="Forward_Exit_Path" type="Path3D" parent="MeshInstance3D/Exit_Path"]
-curve = SubResource("Curve3D_hlrdh")
-
-[node name="Left_Exit_Path" type="Path3D" parent="MeshInstance3D/Exit_Path"]
-curve = SubResource("Curve3D_aahi1")
-
-[node name="Right_Exit_Path" type="Path3D" parent="MeshInstance3D/Exit_Path"]
-curve = SubResource("Curve3D_v0t50")
 
 [node name="Arrow" type="Sprite3D" parent="MeshInstance3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.511285, 0)
