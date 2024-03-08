@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://dok0pyvneckou"]
+[gd_scene load_steps=18 format=3 uid="uid://dok0pyvneckou"]
 
 [ext_resource type="Script" path="res://game_elements/belt_turntable.gd" id="1_utw1d"]
 [ext_resource type="PackedScene" uid="uid://crho7h6t4w6x7" path="res://composition_modules/Linked_Path3D.tscn" id="2_7w5hh"]
@@ -6,9 +6,7 @@
 [ext_resource type="Curve3D" uid="uid://dya28qelk13vt" path="res://game_elements/belt_turntable_entrance_rear_curve3d.tres" id="3_nd0uo"]
 [ext_resource type="Curve3D" uid="uid://daga0jiq0ilrj" path="res://game_elements/belt_turntable_entrance_right_curve3d.tres" id="4_cys10"]
 [ext_resource type="Curve3D" uid="uid://bmu1jt0mj3biu" path="res://game_elements/belt_turntable_entrance_left_curve3d.tres" id="5_oy1c7"]
-[ext_resource type="Curve3D" uid="uid://bhuu7lh3osdmv" path="res://game_elements/belt_turntable_exit_forward_curve3d.tres" id="6_h21qr"]
-[ext_resource type="Curve3D" uid="uid://bn4c7iv1vpek" path="res://game_elements/belt_turntable_exit_left_curve3d.tres" id="7_ss6wc"]
-[ext_resource type="Curve3D" uid="uid://dg6y5knyym7tu" path="res://game_elements/belt_turntable_exit_right_curve3d.tres" id="8_tlm8t"]
+[ext_resource type="Curve3D" uid="uid://bpnl3se0if1gj" path="res://game_elements/Exit_Shutes_curve3d.tres" id="8_g23qn"]
 [ext_resource type="Texture2D" uid="uid://clyrtms0yfxmj" path="res://2D_Media/Sprites/Mouseover_Highlight_V0_Green.png" id="10_wiyli"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_it444"]
@@ -18,20 +16,47 @@
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nrd52"]
 albedo_color = Color(0.129412, 0.129412, 0.129412, 1)
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_g4buf"]
-size = Vector3(0.25, 0.25, 0.1)
+[sub_resource type="Curve3D" id="Curve3D_7kxka"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.15),
+"tilts": PackedFloat32Array(0, 0)
+}
+point_count = 2
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_4yesq"]
-size = Vector3(0.5, 0.5, 0.01)
+[sub_resource type="Curve3D" id="Curve3D_05qof"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, 0.1, 0, 0, 0, 0, 0, 0, 0, 0, -0.25),
+"tilts": PackedFloat32Array(0, 0)
+}
+point_count = 2
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_g0mtl"]
-size = Vector3(0.01, 0.5, 0.5)
+[sub_resource type="Curve3D" id="Curve3D_vrxey"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.15),
+"tilts": PackedFloat32Array(0, 0)
+}
+point_count = 2
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_n6lca"]
-size = Vector3(0.5, 0.5, 0.01)
+[sub_resource type="Curve3D" id="Curve3D_bf4xa"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, 0.1, 0, 0, 0, 0, 0, 0, 0, 0, -0.25),
+"tilts": PackedFloat32Array(0, 0)
+}
+point_count = 2
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_0530d"]
-size = Vector3(0.01, 0.5, 0.5)
+[sub_resource type="Curve3D" id="Curve3D_5835a"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.15),
+"tilts": PackedFloat32Array(0, 0)
+}
+point_count = 2
+
+[sub_resource type="Curve3D" id="Curve3D_b2evr"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.15),
+"tilts": PackedFloat32Array(0, 0)
+}
+point_count = 2
 
 [node name="Belt_Turntable" type="StaticBody3D"]
 script = ExtResource("1_utw1d")
@@ -45,29 +70,17 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 mesh = SubResource("BoxMesh_tlm7r")
 surface_material_override/0 = SubResource("StandardMaterial3D_nrd52")
 
-[node name="Entrance_Path" type="Node3D" parent="MeshInstance3D"]
+[node name="Thru_Paths" type="Node3D" parent="MeshInstance3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 
-[node name="Rear_Entrance_Path" parent="MeshInstance3D/Entrance_Path" instance=ExtResource("2_7w5hh")]
+[node name="Rear_Thru_Path" parent="MeshInstance3D/Thru_Paths" instance=ExtResource("2_7w5hh")]
 curve = ExtResource("3_nd0uo")
 
-[node name="Right_Entrance_Path" parent="MeshInstance3D/Entrance_Path" instance=ExtResource("2_7w5hh")]
+[node name="Right_Thru_Path" parent="MeshInstance3D/Thru_Paths" instance=ExtResource("2_7w5hh")]
 curve = ExtResource("4_cys10")
 
-[node name="Left_Entrance_Path" parent="MeshInstance3D/Entrance_Path" instance=ExtResource("2_7w5hh")]
+[node name="Left_Thru_Path" parent="MeshInstance3D/Thru_Paths" instance=ExtResource("2_7w5hh")]
 curve = ExtResource("5_oy1c7")
-
-[node name="Exit_Path" type="Node3D" parent="MeshInstance3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -1)
-
-[node name="Forward_Exit_Path" parent="MeshInstance3D/Exit_Path" instance=ExtResource("2_7w5hh")]
-curve = ExtResource("6_h21qr")
-
-[node name="Left_Exit_Path" parent="MeshInstance3D/Exit_Path" instance=ExtResource("2_7w5hh")]
-curve = ExtResource("7_ss6wc")
-
-[node name="Right_Exit_Path" parent="MeshInstance3D/Exit_Path" instance=ExtResource("2_7w5hh")]
-curve = ExtResource("8_tlm8t")
 
 [node name="Arrow" type="Sprite3D" parent="MeshInstance3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.511285, 0)
@@ -80,54 +93,59 @@ visible = false
 axis = 1
 texture = ExtResource("10_wiyli")
 
-[node name="Exiting_Object_Area_3D" type="Area3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -0.441224)
-input_ray_pickable = false
-monitorable = false
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Exiting_Object_Area_3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
-shape = SubResource("BoxShape3D_g4buf")
-
-[node name="Entrance_Speed_Override_Areas" type="Node3D" parent="."]
+[node name="Entrance_Gates_Shutes" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 
-[node name="North_Speed_Override" type="Area3D" parent="Entrance_Speed_Override_Areas"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 1)
-input_ray_pickable = false
-monitorable = false
+[node name="North_Enter_Gate" parent="Entrance_Gates_Shutes" instance=ExtResource("2_7w5hh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)
+curve = SubResource("Curve3D_7kxka")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Entrance_Speed_Override_Areas/North_Speed_Override"]
-shape = SubResource("BoxShape3D_4yesq")
+[node name="North_Enter_Shute" parent="Entrance_Gates_Shutes" instance=ExtResource("2_7w5hh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.75)
+curve = SubResource("Curve3D_05qof")
 
-[node name="East_Speed_Override" type="Area3D" parent="Entrance_Speed_Override_Areas"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0.25, 0)
-input_ray_pickable = false
-monitorable = false
+[node name="East_Enter_Gate" parent="Entrance_Gates_Shutes" instance=ExtResource("2_7w5hh")]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -1, 0, 0)
+curve = SubResource("Curve3D_vrxey")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Entrance_Speed_Override_Areas/East_Speed_Override"]
-shape = SubResource("BoxShape3D_g0mtl")
+[node name="East_Enter_Shute" parent="Entrance_Gates_Shutes" instance=ExtResource("2_7w5hh")]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -0.75, 0, 0)
+curve = SubResource("Curve3D_bf4xa")
 
-[node name="South_Speed_Override" type="Area3D" parent="Entrance_Speed_Override_Areas"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, -1)
-input_ray_pickable = false
-monitorable = false
+[node name="South_Enter_Gate" parent="Entrance_Gates_Shutes" instance=ExtResource("2_7w5hh")]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, 0, -1)
+curve = SubResource("Curve3D_5835a")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Entrance_Speed_Override_Areas/South_Speed_Override"]
-shape = SubResource("BoxShape3D_n6lca")
+[node name="South_Enter_Shute" parent="Entrance_Gates_Shutes" instance=ExtResource("2_7w5hh")]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, 0, -0.75)
+curve = SubResource("Curve3D_05qof")
 
-[node name="West_Speed_Override" type="Area3D" parent="Entrance_Speed_Override_Areas"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0.25, 0)
-input_ray_pickable = false
-monitorable = false
+[node name="West_Enter_Gate" parent="Entrance_Gates_Shutes" instance=ExtResource("2_7w5hh")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 1, 0, 0)
+curve = SubResource("Curve3D_b2evr")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Entrance_Speed_Override_Areas/West_Speed_Override"]
-shape = SubResource("BoxShape3D_0530d")
+[node name="West_Enter_Shute" parent="Entrance_Gates_Shutes" instance=ExtResource("2_7w5hh")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0.75, 0, 0)
+curve = SubResource("Curve3D_05qof")
+
+[node name="Exit_Shutes" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="North_Exit_Shute" parent="Exit_Shutes" instance=ExtResource("2_7w5hh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.75)
+curve = ExtResource("8_g23qn")
+
+[node name="East_Exit_Shute" parent="Exit_Shutes" instance=ExtResource("2_7w5hh")]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -0.75, 0, 0)
+curve = ExtResource("8_g23qn")
+
+[node name="South_Exit_Shute" parent="Exit_Shutes" instance=ExtResource("2_7w5hh")]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, 0, -0.75)
+curve = ExtResource("8_g23qn")
+
+[node name="West_Exit_Shute" parent="Exit_Shutes" instance=ExtResource("2_7w5hh")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0.75, 0, 0)
+curve = ExtResource("8_g23qn")
 
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
-[connection signal="area_entered" from="Exiting_Object_Area_3D" to="." method="_on_exiting_object_area_3d_area_entered"]
-[connection signal="area_entered" from="Entrance_Speed_Override_Areas/North_Speed_Override" to="." method="_on_north_speed_override_area_entered"]
-[connection signal="area_entered" from="Entrance_Speed_Override_Areas/East_Speed_Override" to="." method="_on_east_speed_override_area_entered"]
-[connection signal="area_entered" from="Entrance_Speed_Override_Areas/South_Speed_Override" to="." method="_on_south_speed_override_area_entered"]
-[connection signal="area_entered" from="Entrance_Speed_Override_Areas/West_Speed_Override" to="." method="_on_west_speed_override_area_entered"]

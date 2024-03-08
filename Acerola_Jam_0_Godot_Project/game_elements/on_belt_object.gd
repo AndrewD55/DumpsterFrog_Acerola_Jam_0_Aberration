@@ -23,7 +23,7 @@ func set_velocity(new_velocity) -> void:
 
 func _ready():
 	#assuming this is my Linked_Path3D, get the next_path_node now.
-	next_path_node = get_parent().get_exit_path_node()
+	#next_path_node = get_parent().get_exit_path_node()
 	#make sure the object doesn't return to the start of the belt segment
 	self.loop = false 
 	move_velocity=initial_velocity
@@ -65,10 +65,9 @@ func _physics_process(delta):
 				self.reparent(next_path_node)
 				self.progress_ratio = 0.0
 		else:
-			initial_velocity = 0
+			initial_velocity = 0.0
 			next_path_node = get_parent().get_exit_path_node()
 			#stop for now?
-			#eventually I'd like the object to just limply fall
 
 func _on_area_3d_area_entered(area):
 	#handle collisions with other objects.  Should be rare, but possible

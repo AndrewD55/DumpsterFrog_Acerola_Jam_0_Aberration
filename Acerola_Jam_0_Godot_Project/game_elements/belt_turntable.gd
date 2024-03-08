@@ -7,67 +7,88 @@ var RedHighlightTexture:Texture2D = load("res://2D_Media/Sprites/Mouseover_Highl
 
 @onready var BeltMesh = $MeshInstance3D
 
-@onready var Rear_EntrancePathNode = $MeshInstance3D/Entrance_Path/Rear_Entrance_Path
-@onready var Left_EntrancePathNode = $MeshInstance3D/Entrance_Path/Left_Entrance_Path
-@onready var Right_EntrancePathNode = $MeshInstance3D/Entrance_Path/Right_Entrance_Path
+@onready var North_Enter_Gate = $Entrance_Gates_Shutes/North_Enter_Gate
+@onready var North_Enter_Shute = $Entrance_Gates_Shutes/North_Enter_Shute
+@onready var East_Enter_Gate = $Entrance_Gates_Shutes/East_Enter_Gate
+@onready var East_Enter_Shute = $Entrance_Gates_Shutes/East_Enter_Shute
+@onready var South_Enter_Gate = $Entrance_Gates_Shutes/South_Enter_Gate
+@onready var South_Enter_Shute = $Entrance_Gates_Shutes/South_Enter_Shute
+@onready var West_Enter_Gate = $Entrance_Gates_Shutes/West_Enter_Gate
+@onready var West_Enter_Shute = $Entrance_Gates_Shutes/West_Enter_Shute
 
-@onready var Forward_ExitPathNode = $MeshInstance3D/Exit_Path/Forward_Exit_Path
-@onready var Left_ExitPathNode = $MeshInstance3D/Exit_Path/Left_Exit_Path
-@onready var Right_ExitPathNode = $MeshInstance3D/Exit_Path/Right_Exit_Path
+@onready var North_Exit_Shute = $Exit_Shutes/North_Exit_Shute
+@onready var East_Exit_Shute = $Exit_Shutes/East_Exit_Shute
+@onready var South_Exit_Shute = $Exit_Shutes/South_Exit_Shute
+@onready var West_Exit_Shute = $Exit_Shutes/West_Exit_Shute
 
+@onready var Rear_Thru_Path = $MeshInstance3D/Thru_Paths/Rear_Thru_Path
+@onready var Right_Thru_Path = $MeshInstance3D/Thru_Paths/Right_Thru_Path
+@onready var Left_Thru_Path = $MeshInstance3D/Thru_Paths/Left_Thru_Path
 
 enum global_direction {NORTH_ZPOS, EAST_XNEG, SOUTH_ZNEG, WEST_XPOS }
-enum local_orientation {LEFT, RIGHT, FORWARD}
 
 @export var Turntable_Global_Direction:global_direction
-#offset position to unload objects onto NORTH_ExitPathNode
-@export var NORTH_ExitPathNode:Path3D=null
-@export var NORTH_Exit_local_orientation:local_orientation=local_orientation.FORWARD
-#offset position to unload objects onto EAST_ExitPathNode
-@export var EAST_ExitPathNode:Path3D=null
-@export var EAST_Exit_local_orientation:local_orientation=local_orientation.FORWARD
-#offset position to unload objects onto SOUTH_ExitPathNode
-@export var SOUTH_ExitPathNode:Path3D=null
-@export var SOUTH_Exit_local_orientation:local_orientation=local_orientation.FORWARD
-#offset position to unload objects onto WEST_ExitPathNode
-@export var WEST_ExitPathNode:Path3D=null
-@export var WEST_Exit_local_orientation:local_orientation=local_orientation.FORWARD
-
-@export var Entrant_Resume_Velocity:float=1.0
-
-var current_ExitPathNode:Path3D=null
+@export var NORTH_Destination:Path3D=null
+@export var EAST_Destination:Path3D=null
+@export var SOUTH_Destination:Path3D=null
+@export var WEST_Destination:Path3D=null
 
 var Exiting_ObjectNode:Node3D=null
-var Lock_Rotation:bool=false
-var Cannot_Exit_Invalid_Exit_Path:bool=false
 
 var Entry_Direction_Queue = []
-var Entry_Direction_Nodes = []
-var Allow_Entrant:bool= true
-var Prev_Lock_Rotation:bool = false
-
+var Entrant_Object:Node=null
+var Entrant_Direction:global_direction
+var Latch_Gate=true
 
 # HELPER FUNCTIONS
-func set_exitpath(After_Exit_PathNode:Path3D,After_Exit_Direction:local_orientation):
-	match After_Exit_Direction:
-		local_orientation.LEFT:
-			current_ExitPathNode=Left_ExitPathNode
-		local_orientation.RIGHT:
-			current_ExitPathNode=Right_ExitPathNode
-		local_orientation.FORWARD:
-			current_ExitPathNode=Forward_ExitPathNode
-			
-	#if there's nowhere to exit.. don't allow the object to leave entrance paths
-	if After_Exit_PathNode != null:
-		Rear_EntrancePathNode.set_exit_path_node(current_ExitPathNode)
-		Left_EntrancePathNode.set_exit_path_node(current_ExitPathNode)
-		Right_EntrancePathNode.set_exit_path_node(current_ExitPathNode)
-	else:
-		Rear_EntrancePathNode.set_exit_path_node(null)
-		Left_EntrancePathNode.set_exit_path_node(null)
-		Right_EntrancePathNode.set_exit_path_node(null)
-		
-	current_ExitPathNode.set_exit_path_node(After_Exit_PathNode)
+func set_thrupaths_exit_shute(Exit_Shute:Path3D):
+	#if there's nowhere to exit.. don't allow the object to leave entrance path
+	#Set the Exit_Shute to null, objects will halt at the end of the Thru
+	Rear_Thru_Path.set_exit_path_node(Exit_Shute)
+	Left_Thru_Path.set_exit_path_node(Exit_Shute)
+	Right_Thru_Path.set_exit_path_node(Exit_Shute)
+	
+func set_enter_shutes_thru_paths_exit_shutes(current_direction:global_direction):
+	match Turntable_Global_Direction:
+		global_direction.NORTH_ZPOS:#^
+			North_Enter_Shute.set_exit_path_node(null)
+			East_Enter_Shute.set_exit_path_node(Right_Thru_Path)
+			South_Enter_Shute.set_exit_path_node(Left_Thru_Path)
+			West_Enter_Shute.set_exit_path_node(Rear_Thru_Path)
+			if NORTH_Destination != null:
+				set_thrupaths_exit_shute(North_Exit_Shute)
+			else:
+				set_thrupaths_exit_shute(null)
+		global_direction.EAST_XNEG:#>
+			North_Enter_Shute.set_exit_path_node(Left_Thru_Path)
+			East_Enter_Shute.set_exit_path_node(Rear_Thru_Path)
+			South_Enter_Shute.set_exit_path_node(Right_Thru_Path)
+			West_Enter_Shute.set_exit_path_node(null)
+			if EAST_Destination != null:
+				set_thrupaths_exit_shute(East_Exit_Shute)
+			else:
+				set_thrupaths_exit_shute(null)
+		global_direction.SOUTH_ZNEG:#v
+			North_Enter_Shute.set_exit_path_node(Rear_Thru_Path)
+			East_Enter_Shute.set_exit_path_node(Left_Thru_Path)
+			South_Enter_Shute.set_exit_path_node(null)
+			West_Enter_Shute.set_exit_path_node(Right_Thru_Path)
+			if SOUTH_Destination != null:
+				set_thrupaths_exit_shute(South_Exit_Shute)
+			else:
+				set_thrupaths_exit_shute(null)
+		global_direction.WEST_XPOS:#<
+			North_Enter_Shute.set_exit_path_node(Right_Thru_Path)
+			East_Enter_Shute.set_exit_path_node(null)
+			South_Enter_Shute.set_exit_path_node(Rear_Thru_Path)
+			West_Enter_Shute.set_exit_path_node(Left_Thru_Path)
+			if WEST_Destination != null:
+				set_thrupaths_exit_shute(West_Exit_Shute)
+			else:
+				set_thrupaths_exit_shute(null)
+
+
+#func animate_rotate(rotate_from:global_direction, rotate_to:global_direction):
 
 func rotate_belt(LRMouse:int)->void:
 	#rotate belt model and set Turntable_Global_Direction for proper input directions
@@ -76,221 +97,180 @@ func rotate_belt(LRMouse:int)->void:
 			match LRMouse:
 				1:#rotate left
 					Turntable_Global_Direction = global_direction.WEST_XPOS
-					self.set_exitpath(WEST_ExitPathNode,WEST_Exit_local_orientation)
 					BeltMesh.rotate_object_local(Vector3(0,1,0),PI/2)
 				2:#rotate right
 					Turntable_Global_Direction = global_direction.EAST_XNEG
-					self.set_exitpath(EAST_ExitPathNode,EAST_Exit_local_orientation)
 					BeltMesh.rotate_object_local(Vector3(0,1,0),-PI/2)
 		global_direction.EAST_XNEG:#>
 			match LRMouse:
 				1:#rotate left
 					Turntable_Global_Direction = global_direction.NORTH_ZPOS
-					self.set_exitpath(NORTH_ExitPathNode,NORTH_Exit_local_orientation)
 					BeltMesh.rotate_object_local(Vector3(0,1,0),PI/2)
 				2:#rotate right
 					Turntable_Global_Direction = global_direction.SOUTH_ZNEG
-					self.set_exitpath(SOUTH_ExitPathNode,SOUTH_Exit_local_orientation)
 					BeltMesh.rotate_object_local(Vector3(0,1,0),-PI/2)
 		global_direction.SOUTH_ZNEG:#v
 			match LRMouse:
 				1:#rotate left
 					Turntable_Global_Direction = global_direction.EAST_XNEG
-					self.set_exitpath(EAST_ExitPathNode,EAST_Exit_local_orientation)
 					BeltMesh.rotate_object_local(Vector3(0,1,0),PI/2)
 				2:#rotate right
 					Turntable_Global_Direction = global_direction.WEST_XPOS
-					self.set_exitpath(WEST_ExitPathNode,WEST_Exit_local_orientation)
 					BeltMesh.rotate_object_local(Vector3(0,1,0),-PI/2)
 		global_direction.WEST_XPOS:#<
 			match LRMouse:
 				1:#rotate left
 					Turntable_Global_Direction = global_direction.SOUTH_ZNEG
-					self.set_exitpath(SOUTH_ExitPathNode,SOUTH_Exit_local_orientation)
 					BeltMesh.rotate_object_local(Vector3(0,1,0),PI/2)
 				2:#rotate right
 					Turntable_Global_Direction = global_direction.NORTH_ZPOS
-					self.set_exitpath(NORTH_ExitPathNode,NORTH_Exit_local_orientation)
 					BeltMesh.rotate_object_local(Vector3(0,1,0),-PI/2)
+	#Update all Enter_Shutes -> Thru_Paths -> Exit_Shutes with new Turntable Global Direction
+	set_enter_shutes_thru_paths_exit_shutes(Turntable_Global_Direction)
 
 
 # NORMAL INIT/INPUT/MAIN LOGIC
 func _ready():
-	#set initial exit parameters
-	match Turntable_Global_Direction:
-		global_direction.NORTH_ZPOS:#^
-			self.set_exitpath(NORTH_ExitPathNode,NORTH_Exit_local_orientation)
-		global_direction.EAST_XNEG:#>
-			self.set_exitpath(EAST_ExitPathNode,EAST_Exit_local_orientation)
-		global_direction.SOUTH_ZNEG:#v
-			self.set_exitpath(SOUTH_ExitPathNode,SOUTH_Exit_local_orientation)
-		global_direction.WEST_XPOS:#<
-			self.set_exitpath(WEST_ExitPathNode,WEST_Exit_local_orientation)
+	#set initial parameters
+	set_enter_shutes_thru_paths_exit_shutes(Turntable_Global_Direction)
+	Highlight.texture = GreenHighlightTexture #REPLACE THIS IF THE LOCK ROTATION IS NOT NEEDED.
 
 func _input(event):
 	if Highlight.visible == true: #mouseover is occuring
-		if Lock_Rotation == false:
-			if event is InputEventMouseButton:
-				if event.button_index == MOUSE_BUTTON_LEFT:
-					if event.pressed:
-						self.rotate_belt(1)
-				if event.button_index == MOUSE_BUTTON_RIGHT:
-					if event.pressed:
-						self.rotate_belt(2)
+		if event is InputEventMouseButton:
+			if event.button_index == MOUSE_BUTTON_LEFT:
+				if event.pressed:
+					self.rotate_belt(1)
+			if event.button_index == MOUSE_BUTTON_RIGHT:
+				if event.pressed:
+					self.rotate_belt(2)
+
+func monitor_path_node_for_child(PathNode:Path3D):
+	if PathNode.get_child_count() > 0:
+		return PathNode.get_child(0)  #Paths designed so there should only be one child at a time in Gate.
+	else:
+		return null
 
 func _physics_process(_delta):
-	if Lock_Rotation == true:
-		Highlight.texture = RedHighlightTexture
-		#get current parent PathNode3D
-		var Exiting_Object_CurrentPathNode = Exiting_ObjectNode.get_parent()
-		
-		#once it's on path OTHER THAN our entrance/exit path nodes, it must be on it's way. say goodbye!
-		if Exiting_Object_CurrentPathNode not in [Forward_ExitPathNode, Left_ExitPathNode, Right_ExitPathNode,Rear_EntrancePathNode,Left_EntrancePathNode,Right_EntrancePathNode,null]:
-			Exiting_ObjectNode=null
-			Lock_Rotation = false
-			Cannot_Exit_Invalid_Exit_Path = false
-			
-		#if object has no next path (or just an exit path), I'd like to unlock rotation so it'll kickout next valid path.. 
-		elif  Exiting_ObjectNode.next_path_node == null:
-			Lock_Rotation = false
-			Cannot_Exit_Invalid_Exit_Path = true
-			
+	
+	#There is no Object Traversing the Turntable
+	if Entrant_Object == null:
+		#Something is Queued
+		if Entry_Direction_Queue.size() > 0:
+			#Monitor until something enters the gate or is in queue
+			match Entry_Direction_Queue[0]:
+				global_direction.NORTH_ZPOS:#^
+					Entrant_Object = monitor_path_node_for_child(North_Enter_Gate)
+				global_direction.EAST_XNEG:#>
+					Entrant_Object = monitor_path_node_for_child(East_Enter_Gate)
+				global_direction.SOUTH_ZNEG:#v
+					Entrant_Object = monitor_path_node_for_child(South_Enter_Gate)
+				global_direction.WEST_XPOS:#<
+					Entrant_Object = monitor_path_node_for_child(West_Enter_Gate)
+					
+			if Entrant_Object != null:
+				Entrant_Direction = Entry_Direction_Queue.pop_front()
+				
+				#Now, we need to set the gate's next path to it's entry shute
+				#(And Reset it To null as soon as the object enters the shute)
+				match Entrant_Direction:
+					global_direction.NORTH_ZPOS:#^
+						North_Enter_Gate.set_exit_path_node(North_Enter_Shute)
+					global_direction.EAST_XNEG:#>
+						East_Enter_Gate.set_exit_path_node(East_Enter_Shute)
+					global_direction.SOUTH_ZNEG:#v
+						South_Enter_Gate.set_exit_path_node(South_Enter_Shute)
+					global_direction.WEST_XPOS:#<
+						West_Enter_Gate.set_exit_path_node(West_Enter_Shute)
+				Latch_Gate = false
+				print("OBJECT ENTERED")
+				print(Entrant_Object)
+				print(Entrant_Direction)
+
 	else:
-		Highlight.texture = GreenHighlightTexture
-			
-	#After the lock rotation just ended, allow another object onto the belt (And Object not waiting to exit)
-	if Prev_Lock_Rotation == true and Lock_Rotation == false and Cannot_Exit_Invalid_Exit_Path == false:
-		Allow_Entrant = true
+		#Entrant_Object is Known;    once Entrant_Object is null, queue will open again.
+		#Entrant_Direction is known
+		#Entrant_Object should be headed towards it's Entry Shute; 
 		
-		#this is also where a delay could be added for ease of use.
-		#THIS NO LONGER WORKS BECAUSE I UNLOCK ROTATION FOR NO NEXT PATH
-	
-	if Entry_Direction_Queue.size() > 0:
-		if Allow_Entrant == true:
-			#print(Entry_Direction_Queue)
-			#print(Entry_Direction_Nodes)
-			var Entering_Direction =Entry_Direction_Queue.pop_front()
-			var Entering_Node  = Entry_Direction_Nodes.pop_front()
-			Entering_Node.set_velocity(Entrant_Resume_Velocity)
-			Allow_Entrant = false
-			#print("ALLOW ENTRANT")
-			#print(Entering_Direction)
-			#print(Entering_Node)
+		#RESET GATE_NEXT_PATH TO NULL AS SOON AS THE OBJECT ENTERS THE ENTER_SHUTE, OTHERWISE THE GATE WONT HOLD.
+		if Latch_Gate == false:
+			match Entrant_Direction:
+				global_direction.NORTH_ZPOS:#^
+					var monitor_not_null = monitor_path_node_for_child(North_Enter_Shute)
+					if monitor_not_null != null:
+						North_Enter_Gate.set_exit_path_node(null)
+						Latch_Gate == true
+				global_direction.EAST_XNEG:#>
+					var monitor_not_null = monitor_path_node_for_child(East_Enter_Shute)
+					if monitor_not_null != null:
+						East_Enter_Gate.set_exit_path_node(null)
+						Latch_Gate == true
+				global_direction.SOUTH_ZNEG:#v
+					var monitor_not_null = monitor_path_node_for_child(South_Enter_Shute)
+					if monitor_not_null != null:
+						South_Enter_Gate.set_exit_path_node(null)
+						Latch_Gate == true
+				global_direction.WEST_XPOS:#<
+					var monitor_not_null = monitor_path_node_for_child(West_Enter_Shute)
+					if monitor_not_null != null:
+						West_Enter_Gate.set_exit_path_node(null)
+						Latch_Gate == true
+		else:
+			#If Entry Shutes are updated upon rotation correctly it'll also be on it's way to a Thru Path;
+			#If Thru Paths are updated correctly it should be on it's way to the Exit Shute;
 			
-			
-	Prev_Lock_Rotation = Lock_Rotation
-	
-	
-	
+			#monitor the (not null-leading) Exit Shutes, as soon as one of them contains the Entrant Object we should be clear 
+			#to allow a new entrant.
+			#i'm leaving it up to null path logic to make sure that the object can't leave improperly
+			if NORTH_Destination !=null:
+				var monitor_not_null = monitor_path_node_for_child(North_Exit_Shute)
+				if monitor_not_null != null:
+					Entrant_Object = null #goodbye! 
+					print("Goodbye!")
+			if EAST_Destination !=null:
+				var monitor_not_null = monitor_path_node_for_child(East_Exit_Shute)
+				if monitor_not_null != null:
+					Entrant_Object = null #goodbye! 
+					print("Goodbye!")
+			if SOUTH_Destination != null:
+				var monitor_not_null = monitor_path_node_for_child(South_Exit_Shute)
+				if monitor_not_null != null:
+					Entrant_Object = null #goodbye! 
+					print("Goodbye!")
+			if WEST_Destination != null:
+				var monitor_not_null = monitor_path_node_for_child(West_Exit_Shute)
+				if monitor_not_null != null:
+					Entrant_Object = null #goodbye! 
+					print("Goodbye!")
+
+
+
 # GODOT SIGNALS
 func _on_mouse_entered():
 	Highlight.visible = true
 	
 func _on_mouse_exited():
 	Highlight.visible = false
-	
-func _on_exiting_object_area_3d_area_entered(area):
-		Exiting_ObjectNode = area.get_parent()
-		Lock_Rotation = true
-			
-	#When a belt object enters this area
-		#1.Get it's node
-		#2 Lock Rotation
-		#(Out in Monitoring Logic)
-		#2 Once it's exit path becomes it's parent, then get nextpath again.
-		#3 Once it's nextpath becomes it's parent forget it exists and unlock rotation
-		
-	#BUILD THIS NEXT
-	#When objects enter the belt there needs to be an order to admit them in
-	#So that the player has time to make a decision out of the possible input three objects where each should go.
-	# so I need 3 different blockers, not just one.
-	# I likely make up an order to admit each object, and still allow for rotation during the entry path
-	# may need a speed override if that decision is far too fast for normal reflexes.
-	
-	
-	#OKAY.. SOMETHING I SHOULD'VE KNOWN BETTER.
-	# Collisions act weird whenever jumping from belt to belt. 
-	#so when the object finally enters the turntable it registers as entering the 
-	#speed override area again. I'll resize the areas to solve this.
-func _on_north_speed_override_area_entered(area):
-	if Turntable_Global_Direction != global_direction.NORTH_ZPOS:
-		if area.is_in_group("OnBeltObjects"):
-			Entry_Direction_Queue.push_back(global_direction.NORTH_ZPOS)
-			var north_entrant = area.get_parent()
-			Entry_Direction_Nodes.push_back(north_entrant)
-			north_entrant.set_velocity(0.0)
-		
-func _on_east_speed_override_area_entered(area):
-	if Turntable_Global_Direction != global_direction.EAST_XNEG:
-		if area.is_in_group("OnBeltObjects"):
-			Entry_Direction_Queue.push_back(global_direction.EAST_XNEG)
-			var east_entrant = area.get_parent()
-			Entry_Direction_Nodes.push_back(east_entrant)
-			east_entrant.set_velocity(0.0)
-
-func _on_south_speed_override_area_entered(area):
-	if Turntable_Global_Direction != global_direction.SOUTH_ZNEG:
-		if area.is_in_group("OnBeltObjects"):
-			Entry_Direction_Queue.push_back(global_direction.SOUTH_ZNEG)
-			var south_entrant = area.get_parent()
-			Entry_Direction_Nodes.push_back(south_entrant)
-			south_entrant.set_velocity(0.0)
-
-func _on_west_speed_override_area_entered(area):
-	if Turntable_Global_Direction != global_direction.WEST_XPOS:
-		if area.is_in_group("OnBeltObjects"):
-			Entry_Direction_Queue.push_back(global_direction.WEST_XPOS)
-			var west_entrant = area.get_parent()
-			Entry_Direction_Nodes.push_back(west_entrant)
-			west_entrant.set_velocity(0.0)
-
-	
 
 func get_turntable_entrance(Incoming_Obj_Global_Direction:global_direction):
-#This is used to provide incoming objects which enter path to take.
-# I know this is a large nasty state logic to solve the problem.. 
-#But I think it's performant, two switches to get direct path node ref
-#probably could make a cleaner dict[turntable_dir][incoming_obj_dir] lookup?
+#provide incoming objects which enter path to take.
+#push to queue, which direction to search for incoming nodes
 	var EntrancePathNode:Path3D=null
-	match Turntable_Global_Direction:
-		global_direction.NORTH_ZPOS: #^
-				match Incoming_Obj_Global_Direction:
-					global_direction.NORTH_ZPOS:
-						EntrancePathNode=null
-					global_direction.EAST_XNEG:
-						EntrancePathNode=Right_EntrancePathNode
-					global_direction.SOUTH_ZNEG:
-						EntrancePathNode=Left_EntrancePathNode
-					global_direction.WEST_XPOS:
-						EntrancePathNode=Rear_EntrancePathNode
-		global_direction.EAST_XNEG:#>
-				match Incoming_Obj_Global_Direction:
-					global_direction.NORTH_ZPOS:
-						EntrancePathNode=Left_EntrancePathNode
-					global_direction.EAST_XNEG:
-						EntrancePathNode=Rear_EntrancePathNode
-					global_direction.SOUTH_ZNEG:
-						EntrancePathNode=Right_EntrancePathNode  
-					global_direction.WEST_XPOS:
-						EntrancePathNode=null 
-		global_direction.SOUTH_ZNEG:#v
-				match Incoming_Obj_Global_Direction:
-					global_direction.NORTH_ZPOS:
-						EntrancePathNode=Rear_EntrancePathNode
-					global_direction.EAST_XNEG:
-						EntrancePathNode=Left_EntrancePathNode  
-					global_direction.SOUTH_ZNEG:
-						EntrancePathNode=null
-					global_direction.WEST_XPOS:
-						EntrancePathNode= Right_EntrancePathNode
-		global_direction.WEST_XPOS:#<
-			match Incoming_Obj_Global_Direction:
-					global_direction.NORTH_ZPOS:
-						EntrancePathNode=Right_EntrancePathNode
-					global_direction.EAST_XNEG:
-						EntrancePathNode=null 
-					global_direction.SOUTH_ZNEG:
-						EntrancePathNode=Rear_EntrancePathNode
-					global_direction.WEST_XPOS:
-						EntrancePathNode=Left_EntrancePathNode
+	match Incoming_Obj_Global_Direction:
+			global_direction.NORTH_ZPOS:
+				EntrancePathNode=North_Enter_Gate
+				Entry_Direction_Queue.push_back(global_direction.NORTH_ZPOS)
+			global_direction.EAST_XNEG:
+				EntrancePathNode=East_Enter_Gate
+				Entry_Direction_Queue.push_back(global_direction.EAST_XNEG)
+			global_direction.SOUTH_ZNEG:
+				EntrancePathNode=South_Enter_Gate
+				Entry_Direction_Queue.push_back(global_direction.SOUTH_ZNEG)
+			global_direction.WEST_XPOS:
+				EntrancePathNode=West_Enter_Gate
+				Entry_Direction_Queue.push_back(global_direction.WEST_XPOS)
 	return EntrancePathNode
+
+
+
+
