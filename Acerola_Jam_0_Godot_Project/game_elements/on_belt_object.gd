@@ -5,17 +5,14 @@ enum enum_belt_object_type {UNDEF, RAW, REFINED, DEFECT}
 
 @export var initial_object_type:enum_belt_object_type=enum_belt_object_type.UNDEF
 @export var initial_velocity:float=0.0
-@export var follow_collision_distance:float=0.75
+@export var follow_collision_distance:float=0.55
 var move_velocity:float
 
 var belt_object_type:enum_belt_object_type=initial_object_type
 var next_path_node:Node=null
 
-var Colliding_ObjectNode:Node
-
-var manage_collision:bool=false
-var match_front_obj_velocity:bool = false
-var am_behind_suppress_collision = false
+var Ahead_Colliding_ObjectNode:Node=null
+var Behind_Colliding_ObjectNode:Node=null
 
 
 func get_velocity() -> float:
@@ -32,54 +29,30 @@ func _ready():
 	move_velocity=initial_velocity
 
 
-enum enum_collision_order {UNDEF, AHEAD, BEHIND}
-var Collision_Order:enum_collision_order=enum_collision_order.UNDEF
 
 
 func _physics_process(delta):
-	if manage_collision == true:
-		var Collision_Distance:float = 0.0
+	if Ahead_Colliding_ObjectNode !=null:
+		#almost match the Ahead Colliding Object's Velocity
+		move_velocity = Ahead_Colliding_ObjectNode.move_velocity
 		
-		if Collision_Order == enum_collision_order.UNDEF:
-			#get other collider's direction relative to my local Z+ axis
-			var Collision_Position_Difference = Colliding_ObjectNode.global_transform.origin - self.global_transform.origin
-			var Collision_Direction = Collision_Position_Difference.dot(Colliding_ObjectNode.basis.z)
-			if Collision_Direction < 0.3:
-				Collision_Order = enum_collision_order.AHEAD
-			else:
-				Collision_Order = enum_collision_order.BEHIND
-			#print(Collision_Direction)
-			
 		#get distance between this collider's origin and the other collider
-		Collision_Distance = Colliding_ObjectNode.global_transform.origin.distance_to(self.global_transform.origin)
+		var Ahead_Collision_Distance:float = 0.0
+		Ahead_Collision_Distance = Ahead_Colliding_ObjectNode.global_transform.origin.distance_to(self.global_transform.origin)
+		
+		#once the Ahead object gets far enough away, go to full velocity and forget who's ahead
+		if Ahead_Collision_Distance > follow_collision_distance:
+			move_velocity = initial_velocity
+			Ahead_Colliding_ObjectNode = null
 
-		print("Collision")
-		print(self)
-		print(Collision_Distance)
-		print(Collision_Order)
-
-		#if this is the collider behind another object, delay until enough distance is in between
-		if Collision_Order == enum_collision_order.BEHIND: #we are behind
-			am_behind_suppress_collision = true
-			
-			if match_front_obj_velocity == false:
-				move_velocity = Colliding_ObjectNode.move_velocity - 0.1
-				match_front_obj_velocity = true
-			#Don't stop entirely, just slow down for now and speed up once distance is reached.
-			
-			if Collision_Distance > follow_collision_distance:
-				move_velocity = initial_velocity
-				am_behind_suppress_collision = false
-				manage_collision = false
-				Collision_Order = enum_collision_order.UNDEF
-				Colliding_ObjectNode = null
-				
-		#if this is the collider ahead of another object, carry on
-		elif Collision_Order == enum_collision_order.AHEAD: 
-			am_behind_suppress_collision = false
-			manage_collision = false
-			Collision_Order = enum_collision_order.UNDEF
-			Colliding_ObjectNode = null
+	# JUST IGNORE OBJECTS BEHIND YOU, THEY SEE YOU IN FRONT
+	#if Behind_Colliding_ObjectNode !=null:
+		##get distance between this collider's origin and the other collider
+		#var Behind_Collision_Distance:float = 0.0
+		#Behind_Collision_Distance = Behind_Colliding_ObjectNode.global_transform.origin.distance_to(self.global_transform.origin)
+		##once the Behind object gets far enough away, forget who's behind
+		#if Behind_Collision_Distance > follow_collision_distance:
+			#Behind_Colliding_ObjectNode = null
 
 	self.progress += move_velocity*delta
 
@@ -100,10 +73,15 @@ func _physics_process(delta):
 func _on_area_3d_area_entered(area):
 	#handle collisions with other objects.  Should be rare, but possible
 	if area.is_in_group("OnBeltObjects"):
-		if am_behind_suppress_collision == false:
-			Colliding_ObjectNode = area.get_parent()
-			manage_collision = true
-
+		var Colliding_ObjectNode = area.get_parent()
+		var Collision_Position_Difference = Colliding_ObjectNode.global_transform.origin - self.global_transform.origin
+		var Collision_Direction = Collision_Position_Difference.dot(Colliding_ObjectNode.basis.z)
+		if Collision_Direction < 0.3:
+			#Colliding_Node is Ahead
+			Ahead_Colliding_ObjectNode = Colliding_ObjectNode
+		#else:
+			##Colliding_Node is Behind IGNORE THEM
+			#Behind_Colliding_ObjectNode = Colliding_ObjectNode
 
 #func _on_area_3d_area_exited(area):
 	#pass # Replace with function body.

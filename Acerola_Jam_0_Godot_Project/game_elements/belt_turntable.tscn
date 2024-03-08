@@ -22,16 +22,16 @@ albedo_color = Color(0.129412, 0.129412, 0.129412, 1)
 size = Vector3(0.25, 0.25, 0.1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_4yesq"]
-size = Vector3(0.5, 0.5, 0.1)
+size = Vector3(0.5, 0.5, 0.01)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_g0mtl"]
-size = Vector3(0.1, 0.5, 0.5)
+size = Vector3(0.01, 0.5, 0.5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_n6lca"]
-size = Vector3(0.5, 0.5, 0.1)
+size = Vector3(0.5, 0.5, 0.01)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_0530d"]
-size = Vector3(0.1, 0.5, 0.5)
+size = Vector3(0.01, 0.5, 0.5)
 
 [node name="Belt_Turntable" type="StaticBody3D"]
 script = ExtResource("1_utw1d")
