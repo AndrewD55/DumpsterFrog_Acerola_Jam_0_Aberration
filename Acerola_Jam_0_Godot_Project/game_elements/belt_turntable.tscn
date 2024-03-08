@@ -1,15 +1,15 @@
-[gd_scene load_steps=14 format=3 uid="uid://dok0pyvneckou"]
+[gd_scene load_steps=15 format=3 uid="uid://dok0pyvneckou"]
 
 [ext_resource type="Script" path="res://game_elements/belt_turntable.gd" id="1_utw1d"]
 [ext_resource type="PackedScene" uid="uid://crho7h6t4w6x7" path="res://composition_modules/Linked_Path3D.tscn" id="2_7w5hh"]
 [ext_resource type="Texture2D" uid="uid://bs3pm4y6j58h4" path="res://2D_Media/Sprites/Temp_Direction_Arrow_V0.png" id="2_b20g6"]
-[ext_resource type="Texture2D" uid="uid://5h1ipeqg7vjp" path="res://2D_Media/Sprites/Mouseover_Highlight_V0.png" id="2_tvmiy"]
 [ext_resource type="Curve3D" uid="uid://dya28qelk13vt" path="res://game_elements/belt_turntable_entrance_rear_curve3d.tres" id="3_nd0uo"]
 [ext_resource type="Curve3D" uid="uid://daga0jiq0ilrj" path="res://game_elements/belt_turntable_entrance_right_curve3d.tres" id="4_cys10"]
 [ext_resource type="Curve3D" uid="uid://bmu1jt0mj3biu" path="res://game_elements/belt_turntable_entrance_left_curve3d.tres" id="5_oy1c7"]
 [ext_resource type="Curve3D" uid="uid://bhuu7lh3osdmv" path="res://game_elements/belt_turntable_exit_forward_curve3d.tres" id="6_h21qr"]
 [ext_resource type="Curve3D" uid="uid://bn4c7iv1vpek" path="res://game_elements/belt_turntable_exit_left_curve3d.tres" id="7_ss6wc"]
 [ext_resource type="Curve3D" uid="uid://dg6y5knyym7tu" path="res://game_elements/belt_turntable_exit_right_curve3d.tres" id="8_tlm8t"]
+[ext_resource type="Texture2D" uid="uid://clyrtms0yfxmj" path="res://2D_Media/Sprites/Mouseover_Highlight_V0_Green.png" id="10_wiyli"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_it444"]
 
@@ -17,6 +17,9 @@
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nrd52"]
 albedo_color = Color(0.129412, 0.129412, 0.129412, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_g4buf"]
+size = Vector3(0.25, 0.25, 0.1)
 
 [node name="Belt_Turntable" type="StaticBody3D"]
 script = ExtResource("1_utw1d")
@@ -63,7 +66,17 @@ texture = ExtResource("2_b20g6")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.05852, 0)
 visible = false
 axis = 1
-texture = ExtResource("2_tvmiy")
+texture = ExtResource("10_wiyli")
+
+[node name="Exiting_Object_Area_3D" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -0.445073)
+input_ray_pickable = false
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Exiting_Object_Area_3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.137648, 0)
+shape = SubResource("BoxShape3D_g4buf")
 
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
+[connection signal="area_entered" from="Exiting_Object_Area_3D" to="." method="_on_exiting_object_area_3d_area_entered"]

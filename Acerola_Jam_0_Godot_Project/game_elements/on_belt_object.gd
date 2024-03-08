@@ -1,4 +1,5 @@
 extends Node3D
+class_name On_Belt_Object
 
 enum enum_belt_object_type {UNDEF, RAW, REFINED, DEFECT}
 
