@@ -1,10 +1,11 @@
-[gd_scene load_steps=17 format=3 uid="uid://jvekwgk3g1bo"]
+[gd_scene load_steps=18 format=3 uid="uid://jvekwgk3g1bo"]
 
 [ext_resource type="PackedScene" uid="uid://crho7h6t4w6x7" path="res://composition_modules/Linked_Path3D.tscn" id="1_bny65"]
 [ext_resource type="PackedScene" uid="uid://6horm3jye3eg" path="res://game_elements/on_belt_object.tscn" id="2_4tc6p"]
 [ext_resource type="PackedScene" uid="uid://dok0pyvneckou" path="res://game_elements/belt_turntable.tscn" id="3_8xeo6"]
 [ext_resource type="PackedScene" uid="uid://cwl267b67uw75" path="res://game_elements/belt_object_spawner.tscn" id="4_kq5bj"]
 [ext_resource type="PackedScene" uid="uid://dsv2is2aywp5w" path="res://game_elements/belt_object_despawner.tscn" id="5_hyshx"]
+[ext_resource type="PackedScene" uid="uid://bh2ao3g1gkv76" path="res://3D_Media/Factory/Factory_V0.glb" id="6_ebi33"]
 
 [sub_resource type="Environment" id="Environment_ynf52"]
 
@@ -78,16 +79,18 @@ point_count = 2
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_ynf52")
 
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -0.5, 0.866025, 0, -0.866025, -0.5, 5.33666, 19.3504, 0)
+
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(-1, 5.43025e-08, -6.85127e-08, 0, 0.783693, 0.621148, 8.74228e-08, 0.621148, -0.783693, 0, 4.47236, -6.03047)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 
 [node name="TempFloor" type="StaticBody3D" parent="."]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="TempFloor"]
 shape = SubResource("WorldBoundaryShape3D_6s5gt")
-
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.052336, 0.99863, 0, -0.99863, 0.052336, 5.33666, 9.64089, 0)
 
 [node name="ExampleTurntable_SOUTH" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.35869, 0, -0.502164)
@@ -204,3 +207,6 @@ ExitPathDespawner = NodePath("../belt_object_despawner")
 
 [node name="belt_object_despawner" parent="Belt_Object_Spawner_Example" instance=ExtResource("5_hyshx")]
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 4.303, 0, -2.942)
+
+[node name="Factory_V0" parent="Belt_Object_Spawner_Example/belt_object_despawner" instance=ExtResource("6_ebi33")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 2.38419e-07, -0.75, 3.38615)
