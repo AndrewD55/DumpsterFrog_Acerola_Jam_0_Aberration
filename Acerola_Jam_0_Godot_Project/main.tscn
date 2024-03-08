@@ -83,7 +83,8 @@ environment = SubResource("Environment_ynf52")
 transform = Transform3D(1, 0, 0, 0, -0.5, 0.866025, 0, -0.866025, -0.5, 5.33666, 19.3504, 0)
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(-1, 5.43025e-08, -6.85127e-08, 0, 0.783693, 0.621148, 8.74228e-08, 0.621148, -0.783693, 0, 4.47236, -6.03047)
+transform = Transform3D(-1, -6.18172e-08, 6.18172e-08, 0, 0.707107, 0.707107, -8.74228e-08, 0.707107, -0.707107, 0, 5.65094, -4.6857)
+fov = 80.0
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 
@@ -108,6 +109,7 @@ ExitPathTurntable = NodePath("../Belt_Turntable_SOUTH")
 
 [node name="OnBeltObject_ExampleSOUTH" parent="ExampleTurntable_SOUTH/LinkedPath3D" instance=ExtResource("2_4tc6p")]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
+initial_object_type = 1
 initial_velocity = 1.0
 
 [node name="LinkedPath3D_EAST_RETURN" parent="ExampleTurntable_SOUTH" node_paths=PackedStringArray("ExitPathNode") instance=ExtResource("1_bny65")]
@@ -156,6 +158,7 @@ initial_velocity = 1.0
 [node name="OnBeltObject2" parent="Input_Queue_Example/LinkedPath3D_NORTH" instance=ExtResource("2_4tc6p")]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, -0.999532)
 progress = 1.0
+initial_object_type = 1
 initial_velocity = 1.0
 
 [node name="OnBeltObject3" parent="Input_Queue_Example/LinkedPath3D_NORTH" instance=ExtResource("2_4tc6p")]

@@ -25,7 +25,7 @@ func _physics_process(delta):
 		if Spawn_Shute.get_child_count() == 0:
 			#print("SPAWN OBJECT")
 			var New_On_Belt_Obj = On_Belt_Objects.instantiate()
-			New_On_Belt_Obj.initial_object_type = On_Belt_Object.enum_belt_object_type.UNDEF
+			New_On_Belt_Obj.initial_object_type = On_Belt_Object.enum_belt_object_type.REFINED
 			New_On_Belt_Obj.initial_velocity = 1.0
 			New_On_Belt_Obj.follow_collision_distance = 0.75
 			Spawn_Shute.add_child(New_On_Belt_Obj)

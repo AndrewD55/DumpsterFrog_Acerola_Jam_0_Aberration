@@ -4,8 +4,12 @@ class_name On_Belt_Object
 @onready var FrontBumper = $Area3D/Front_Bumper
 @onready var BackBumper = $Area3D/Back_Bumper
 
-enum enum_belt_object_type {UNDEF, RAW, REFINED, DEFECT}
-@export var initial_object_type:enum_belt_object_type=enum_belt_object_type.UNDEF
+enum enum_belt_object_type {REFINED, DEFECT}
+
+var Good_Product = preload("res://3D_Media/Good_Product/Good_Donut_V0.glb").instantiate()
+var Bad_Product = preload("res://3D_Media/Bad_Product/Bad_Donut_V0.glb").instantiate()
+
+@export var initial_object_type:enum_belt_object_type=enum_belt_object_type.REFINED
 @export var initial_velocity:float=0.0
 @export var follow_collision_distance:float=0.75
 var move_velocity:float
@@ -27,6 +31,12 @@ func _ready():
 	#make sure the object doesn't return to the start of the belt segment
 	self.loop = false 
 	move_velocity=initial_velocity
+	
+	match initial_object_type:
+		enum_belt_object_type.REFINED:
+			self.add_child(Good_Product)
+		enum_belt_object_type.DEFECT:
+			self.add_child(Bad_Product)
 
 
 func _physics_process(delta):
