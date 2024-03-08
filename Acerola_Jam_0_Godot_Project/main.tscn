@@ -198,7 +198,7 @@ curve = SubResource("Curve3D_rb53m")
 ExitPathTurntable = NodePath("../Belt_Turntable_Input_Queue")
 
 [node name="OnBeltObject" parent="Input_Queue_Example/LinkedPath3D_NORTH" instance=ExtResource("2_4tc6p")]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, -1.985)
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, -2.00047)
 progress = 2.0
 initial_velocity = 1.0
 

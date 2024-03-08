@@ -291,7 +291,7 @@ func get_turntable_entrance(Incoming_Obj_Global_Direction:global_direction):
 			global_direction.WEST_XPOS:
 				EntrancePathNode=West_Enter_Gate
 				Entry_Direction_Queue.push_back(global_direction.WEST_XPOS)
-	print(Entry_Direction_Queue)
+	#print(Entry_Direction_Queue)
 	return EntrancePathNode
 	
 
