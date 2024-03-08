@@ -12,13 +12,6 @@ class_name Belt_Turntable_Path3D
 
 @onready var ExitEntrancePathNode = $MeshInstance3D/Entrance_Path/Left_Entrance_Path
 
-#hmm.. how do I link all these entrance/exit path nodes?
-#OH. I DIDNT EVEN UPDATE THESE PATH NODES WITH LINKED PATH NODES..
-
-#SOMEHOW I'll NEED TO BE ABLE TO LINK ANY PATH TO ANY ENTRANCE, 
-#FIND A BETTER SOLUTION
-
-
 
 enum global_direction {NORTH_ZPOS, EAST_XNEG, SOUTH_ZNEG, WEST_XPOS }
 enum local_orientation {LEFT, RIGHT, FORWARD}
@@ -48,32 +41,55 @@ var current_Exit_local_orientation:local_orientation=local_orientation.FORWARD
 var current_Exit_Position_Override:float=0.0
 
 
-func rotate_belt(orientation:local_orientation):
-	if   orientation == local_orientation.LEFT:
-		self.rotate_object_local(Vector3(0,1,0),PI/2)
-		current_ExitPathNode=Left_ExitPathNode
-		current_Exit_local_orientation=Left_Exit_local_orientation
-		current_Exit_Position_Override=Left_Exit_Position_Override
-	elif orientation == local_orientation.RIGHT:
-		self.rotate_object_local(Vector3(0,1,0),-PI/2)
-		current_ExitPathNode=Right_ExitPathNode
-		current_Exit_local_orientation=Right_Exit_local_orientation
-		current_Exit_Position_Override=Right_Exit_Position_Override
-	elif orientation == local_orientation.FORWARD:
-		self.rotate_object_local(Vector3(0,1,0),0.0)
-		current_ExitPathNode=Forward_ExitPathNode
-		current_Exit_local_orientation=Forward_Exit_local_orientation
-		current_Exit_Position_Override=Forward_Exit_Position_Override
-		
-		#Forward_EntrancePathNode.ExitPathNode = current_ExitPathNode
-		#Left_EntrancePathNode.ExitPathNode = current_ExitPathNode
-		#Right_EntrancePathNode.ExitPathNode = current_ExitPathNode
-		#
-		
-
+func rotate_belt(LRMouse:int):
+	match Turntable_Global_Direction:
+		global_direction.NORTH_ZPOS:#^
+			match LRMouse:
+				1:#rotate left
+					Turntable_Global_Direction = global_direction.WEST_XPOS
+					self.rotate_object_local(Vector3(0,1,0),PI/2)
+				2:#rotate right
+					Turntable_Global_Direction = global_direction.EAST_XNEG
+					self.rotate_object_local(Vector3(0,1,0),-PI/2)
+		global_direction.EAST_XNEG:#>
+			match LRMouse:
+				1:#rotate left
+					Turntable_Global_Direction = global_direction.NORTH_ZPOS
+					self.rotate_object_local(Vector3(0,1,0),PI/2)
+				2:#rotate right
+					Turntable_Global_Direction = global_direction.SOUTH_ZNEG
+					self.rotate_object_local(Vector3(0,1,0),-PI/2)
+		global_direction.SOUTH_ZNEG:#v
+			match LRMouse:
+				1:#rotate left
+					Turntable_Global_Direction = global_direction.EAST_XNEG
+					self.rotate_object_local(Vector3(0,1,0),PI/2)
+				2:#rotate right
+					Turntable_Global_Direction = global_direction.WEST_XPOS
+					self.rotate_object_local(Vector3(0,1,0),-PI/2)
+		global_direction.WEST_XPOS:#<
+			match LRMouse:
+				1:#rotate left
+					Turntable_Global_Direction = global_direction.SOUTH_ZNEG
+					self.rotate_object_local(Vector3(0,1,0),PI/2)
+				2:#rotate right
+					Turntable_Global_Direction = global_direction.NORTH_ZPOS
+					self.rotate_object_local(Vector3(0,1,0),-PI/2)
 
 func _ready():
 	pass
+		
+
+func _input(event):
+	if Highlight.visible == true: #mouseover is occuring
+		if event is InputEventMouseButton:
+			if event.button_index == MOUSE_BUTTON_LEFT:
+				if event.pressed:
+					self.rotate_belt(1)
+			if event.button_index == MOUSE_BUTTON_RIGHT:
+				if event.pressed:
+					self.rotate_belt(2)
+		
 
 #func _physics_process(delta):
 

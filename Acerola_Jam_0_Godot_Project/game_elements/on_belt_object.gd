@@ -9,7 +9,6 @@ var belt_object_type:enum_belt_object_type=initial_object_type
 var next_path_node:Node=null
 
 func _ready():
-	
 	#assuming this is my Linked_Path3D, get the next_path_node now.
 	next_path_node = get_parent().get_exit_path_node()
 	#make sure the object doesn't return to the start of the belt segment
