@@ -248,26 +248,24 @@ func _physics_process(_delta):
 			#i'm leaving it up to null path logic to make sure that the object can't leave improperly
 			if NORTH_Destination !=null:
 				var monitor_not_null = monitor_path_node_for_child(North_Exit_Shute)
-				if monitor_not_null != null:
+				if monitor_not_null == Entrant_Object:
 					Entrant_Object = null #goodbye! 
 					#print("Goodbye!")
 			if EAST_Destination !=null:
 				var monitor_not_null = monitor_path_node_for_child(East_Exit_Shute)
-				if monitor_not_null != null:
+				if monitor_not_null == Entrant_Object:
 					Entrant_Object = null #goodbye! 
 					#print("Goodbye!")
 			if SOUTH_Destination != null:
 				var monitor_not_null = monitor_path_node_for_child(South_Exit_Shute)
-				if monitor_not_null != null:
+				if monitor_not_null == Entrant_Object:
 					Entrant_Object = null #goodbye! 
 					#print("Goodbye!")
 			if WEST_Destination != null:
 				var monitor_not_null = monitor_path_node_for_child(West_Exit_Shute)
-				if monitor_not_null != null:
+				if monitor_not_null == Entrant_Object:
 					Entrant_Object = null #goodbye! 
 					#print("Goodbye!")
-
-
 
 # GODOT SIGNALS
 func _on_mouse_entered():
@@ -293,8 +291,9 @@ func get_turntable_entrance(Incoming_Obj_Global_Direction:global_direction):
 			global_direction.WEST_XPOS:
 				EntrancePathNode=West_Enter_Gate
 				Entry_Direction_Queue.push_back(global_direction.WEST_XPOS)
+	print(Entry_Direction_Queue)
 	return EntrancePathNode
-
+	
 
 
 

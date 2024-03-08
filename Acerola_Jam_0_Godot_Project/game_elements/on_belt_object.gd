@@ -29,31 +29,13 @@ func _ready():
 	move_velocity=initial_velocity
 
 
-
-
 func _physics_process(delta):
-	if Ahead_Colliding_ObjectNode !=null:
-		#almost match the Ahead Colliding Object's Velocity
-		move_velocity = Ahead_Colliding_ObjectNode.get_velocity()
-		#get distance between this collider's origin and the other collider
-		var Ahead_Collision_Distance:float = 0.0
-		Ahead_Collision_Distance = Ahead_Colliding_ObjectNode.global_transform.origin.distance_to(self.global_transform.origin)
-		#once the Ahead object gets far enough away, go to full velocity and forget who's ahead
-		if Ahead_Collision_Distance > follow_collision_distance:
-			print("Goodbye Collided Object")
-			move_velocity = initial_velocity
-			Ahead_Colliding_ObjectNode = null
-
 	#at end of path, reparent and get next planned parent
 	if self.progress_ratio == 1.0:
 		next_path_node = get_parent().get_exit_path_node()
 		if next_path_node != null:
 			self.reparent(next_path_node)
 			self.progress_ratio = 0.0
-		else:
-			move_velocity = 0.0  
-			#stop for now?
-	
 	#Move
 	self.progress += move_velocity*delta
 
@@ -66,6 +48,17 @@ func _on_area_3d_area_entered(area):
 		
 		if Distance_to_FrontBumper < Distance_to_BackBumper:
 			Ahead_Colliding_ObjectNode = Colliding_ObjectNode
+			move_velocity = 0.0
+			#print("CollisionAhead")
+			#print(self)
+			#print(Ahead_Colliding_ObjectNode)
 
-#func _on_area_3d_area_exited(area):
-	#pass # Replace with function body.
+func _on_area_3d_area_exited(area):
+	if area.is_in_group("OnBeltObjects"):
+		var Exiting_ObjectNode = area.get_parent()
+		if Exiting_ObjectNode == Ahead_Colliding_ObjectNode:
+			Ahead_Colliding_ObjectNode = null
+			move_velocity = initial_velocity
+			#print("EndCollision")
+			#print(self)
+			#print(Ahead_Colliding_ObjectNode)
