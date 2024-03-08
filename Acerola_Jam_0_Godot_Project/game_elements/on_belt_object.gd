@@ -23,62 +23,40 @@ func _ready():
 	self.loop = false 
 	move_velocity=initial_velocity
 
+
+enum enum_collision_order {UNDEF, AHEAD, BEHIND}
+var Collision_Order:enum_collision_order=enum_collision_order.UNDEF
+
 func _physics_process(delta):
 	if manage_collision == true:
 		var Collision_Distance:float = 0.0
-		var Ahead_of_Collision:bool=false
-		##if both objects are on the same belt.
-		#if Colliding_ObjectNode_Current_Path == self.get_parent():
-#
-			#Collision_Distance = self.progress - Colliding_ObjectNode.progress
-			#print("Collided with Object on Same Belt")
-			#print(Colliding_ObjectNode_Current_Path)
-			#print(Colliding_ObjectNode.progress)
-			#print(self.get_parent())
-			#print(self.progress)
-		##if object is one the belt ahead
-		#elif Colliding_ObjectNode_Current_Path == next_path_node: 
-			#var our_path_length = self.progress/self.progress_ratio
-			##their_path_length = Colliding_ObjectNode.progress/Colliding_ObjectNode.progress_ratio
-			#Collision_Distance = -(our_path_length-self.progress) - Colliding_ObjectNode.progress
-			#print("Collided with Object on Next Belt")
-		##if object is one the belt behind
-		#elif Colliding_ObjectNode_Current_Path.get_exit_path_node() == self.get_parent():
-			#var their_path_length = Colliding_ObjectNode.progress/Colliding_ObjectNode.progress_ratio
-			#Collision_Distance = (their_path_length-Colliding_ObjectNode.progress) + self.progress
-			#print("Collided with Object on Previous Belt")
-		#else:
-		print("Collided with Object")
-			#I could use a physical distance? 
-			# STILL NEED TO GET DIRECTION SOMEHOW USING THAT DIRECTION VECTOR LOGIC.. 
-			#otherwise this got too complext to work every time since next path node is usually assigned later
-			
-		var Collision_Direction = Colliding_ObjectNode.global_transform.origin - self.global_transform.origin
-		if Collision_Direction.dot(Colliding_ObjectNode.basis.z) < 0:
-			Ahead_of_Collision = true
-		print(Collision_Direction)
 		
+
+		if Collision_Order == enum_collision_order.UNDEF:
+			#get other collider's direction relative to my local Z+ axis
+			var Collision_Position_Difference = Colliding_ObjectNode.global_transform.origin - self.global_transform.origin
+			var Collision_Direction = Collision_Position_Difference.dot(Colliding_ObjectNode.basis.z)
+			if Collision_Direction < 0.3:
+				Collision_Order = enum_collision_order.AHEAD
+			else:
+				Collision_Order = enum_collision_order.BEHIND
+			print(Collision_Direction)
+			
+		#get distance between this collider's origin and the other collider
 		Collision_Distance = Colliding_ObjectNode.global_transform.origin.distance_to(self.global_transform.origin)
 
-#GETTING STUCK SOMEWHERE AND IM NOT SURE WHY
-
-		print(Collision_Distance)
-		#if Collision_Distance < 0.0: #we are behind
-		if Ahead_of_Collision == false: #we are behind
+		#if this is the collider behind another object, delay until enough distance is in between
+		if Collision_Order == enum_collision_order.BEHIND: #we are behind
 			move_velocity = 0.0
 			if Collision_Distance > follow_collision_distance:
-				print("FAR ENOUGH TO START AGAIN")
 				move_velocity = initial_velocity
 				manage_collision = false
-				#Colliding_ObjectNode = null
-				#Colliding_ObjectNode_Current_Path = null
-
-		#elif Collision_Distance > 0.0: # we are in front
-		elif Ahead_of_Collision == true: # we are in front
+				Collision_Order = enum_collision_order.UNDEF
+		#if this is the collider ahead of another object, carry on
+		elif Collision_Order == enum_collision_order.AHEAD: 
 			manage_collision = false
-			#Colliding_ObjectNode = null
-			#Colliding_ObjectNode_Current_Path = null
-	
+			Collision_Order = enum_collision_order.UNDEF
+
 	self.progress += move_velocity*delta
 
 	#at end of path, reparent and get next planned parent
@@ -86,22 +64,17 @@ func _physics_process(delta):
 		if next_path_node != null:
 			#once just in case the next_path_node has changed.
 			next_path_node = get_parent().get_exit_path_node()
-			self.reparent(next_path_node)
-			self.progress_ratio = 0.0
+			if next_path_node != null:
+				self.reparent(next_path_node)
+				self.progress_ratio = 0.0
 		else:
 			initial_velocity = 0
+			next_path_node = get_parent().get_exit_path_node()
 			#stop for now?
 			#eventually I'd like the object to just limply fall
-
-
-# TRY COMPARING DISTANCE ON THE BELT.
-# OR IF ON DIFFERENT BELTS SEE IF IT'S ON YOUR NEXT BELT, LET IT GO.
-
-# THIS SHOULD BE A MORE DISCRETE WAY TO SOLVE THE ISSUE WITHOUT GETTING INTO REAL-WORLD COORDINATES.
 
 func _on_area_3d_area_entered(area):
 	#handle collisions with other objects.  Should be rare, but possible
 	if area.is_in_group("OnBeltObjects"):
 		Colliding_ObjectNode = area.get_parent()
-		Colliding_ObjectNode_Current_Path = Colliding_ObjectNode.get_parent()
 		manage_collision = true
