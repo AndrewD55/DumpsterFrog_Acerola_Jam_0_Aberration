@@ -177,7 +177,6 @@ curve = ExtResource("8_g23qn")
 
 [node name="Graphical_Paths_PLEASE_DONT_USE" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-visible = false
 
 [node name="North_Graphical" parent="Graphical_Paths_PLEASE_DONT_USE" instance=ExtResource("2_7w5hh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.75)

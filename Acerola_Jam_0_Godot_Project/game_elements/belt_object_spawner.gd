@@ -70,8 +70,8 @@ func _physics_process(delta):
 					
 					
 				else:
-					print("CANNOT SPAWN ANYMORE PRODUCTS")
-					print("EMIT GAME FINISHED SIGNAL")
+					#print("CANNOT SPAWN ANYMORE PRODUCTS")
+					#print("EMIT GAME FINISHED SIGNAL")
 					more_products_to_spawn = false
 		
 		

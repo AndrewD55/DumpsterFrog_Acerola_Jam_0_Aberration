@@ -18,9 +18,7 @@ func get_despawner_entrance()->Path3D: #other linked paths will call this. #retu
 	
 func _on_death_path_child_entered_tree(node):
 		if node.initial_object_type == On_Belt_Object.enum_belt_object_type.REFINED:
-			print("EMIT REFINED SCORE")
-			print(Object_Type_REFINED_Score)
+			EventBus.trigger_event("Add_Refined_Score", Object_Type_REFINED_Score)
 		elif node.initial_object_type == On_Belt_Object.enum_belt_object_type.DEFECT:
-			print("EMIT DEFECT SCORE")
-			print(Object_Type_REFINED_Score)
+			EventBus.trigger_event("Add_Defect_Score", Object_Type_DEFECT_Score)
 		node.queue_free()

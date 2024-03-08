@@ -1,10 +1,13 @@
-[gd_scene load_steps=12 format=3 uid="uid://jvekwgk3g1bo"]
+[gd_scene load_steps=15 format=3 uid="uid://jvekwgk3g1bo"]
 
+[ext_resource type="PackedScene" uid="uid://dwqmw47wovn07" path="res://game_elements/hud.tscn" id="1_a75ad"]
 [ext_resource type="PackedScene" uid="uid://dok0pyvneckou" path="res://game_elements/belt_turntable.tscn" id="3_8xeo6"]
 [ext_resource type="PackedScene" uid="uid://bjlnaliaoxaam" path="res://composition_modules/Conveyor_Linked_Path3D.tscn" id="4_2s213"]
 [ext_resource type="PackedScene" uid="uid://cwl267b67uw75" path="res://game_elements/belt_object_spawner.tscn" id="4_kq5bj"]
 [ext_resource type="PackedScene" uid="uid://dsv2is2aywp5w" path="res://game_elements/belt_object_despawner.tscn" id="5_xpj6u"]
 [ext_resource type="PackedScene" uid="uid://bh2ao3g1gkv76" path="res://3D_Media/Factory/Factory_V0.glb" id="6_ebi33"]
+[ext_resource type="PackedScene" uid="uid://cn1hrx8qiyvv4" path="res://3D_Media/Bad_Product/Bad_Donut_V0.glb" id="7_25lyb"]
+[ext_resource type="PackedScene" uid="uid://br3wcnt2cllqr" path="res://3D_Media/Good_Product/Good_Donut_V0.glb" id="8_21tbe"]
 
 [sub_resource type="Environment" id="Environment_ynf52"]
 
@@ -47,8 +50,9 @@ environment = SubResource("Environment_ynf52")
 transform = Transform3D(1, 0, 0, 0, -0.5, 0.866025, 0, -0.866025, -0.5, 5.33666, 19.3504, 0)
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(-0.728574, 0.391371, -0.562146, 7.85345e-09, 0.820691, 0.571373, 0.684967, 0.416287, -0.597934, -2.83252, 3.66664, -4.63591)
-fov = 70.0
+transform = Transform3D(-0.791991, 0.350187, -0.500119, -6.19315e-08, 0.819152, 0.573576, 0.610533, 0.454268, -0.648761, -2.72561, 3.55569, -4.81569)
+
+[node name="HUD" parent="Camera3D" instance=ExtResource("1_a75ad")]
 
 [node name="Factory_V0" parent="." instance=ExtResource("6_ebi33")]
 transform = Transform3D(1, 0, -1.06581e-14, 0, 1, 0, 1.06581e-14, 0, 1, 0, -0.75, 0)
@@ -97,6 +101,16 @@ ExitPathDespawner = NodePath("../belt_object_despawner_D")
 
 [node name="belt_object_despawner_E" parent="." instance=ExtResource("5_xpj6u")]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -3, 0, 0)
+Object_Type_REFINED_Score = -5
+Object_Type_DEFECT_Score = 5
+
+[node name="Bad_Donut_V0" parent="belt_object_despawner_E" instance=ExtResource("7_25lyb")]
+transform = Transform3D(-0.671643, 0, 0.740875, 0, 1, 0, -0.740875, 0, -0.671643, 0.0203948, 2.0501, 0.0795057)
 
 [node name="belt_object_despawner_D" parent="." instance=ExtResource("5_xpj6u")]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -4, 0, -2)
+Object_Type_REFINED_Score = 10
+Object_Type_DEFECT_Score = -20
+
+[node name="Good_Donut_V0" parent="belt_object_despawner_D" instance=ExtResource("8_21tbe")]
+transform = Transform3D(1, -1.90743e-09, 4.16343e-11, 1.90743e-09, 0.999047, -0.0436368, 4.16378e-11, 0.0436368, 0.999047, -0.052826, 2.03506, 0.240561)
