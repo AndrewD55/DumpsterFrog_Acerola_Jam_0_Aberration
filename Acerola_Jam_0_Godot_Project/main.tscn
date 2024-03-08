@@ -1,9 +1,10 @@
-[gd_scene load_steps=16 format=3 uid="uid://jvekwgk3g1bo"]
+[gd_scene load_steps=17 format=3 uid="uid://jvekwgk3g1bo"]
 
 [ext_resource type="PackedScene" uid="uid://crho7h6t4w6x7" path="res://composition_modules/Linked_Path3D.tscn" id="1_bny65"]
 [ext_resource type="PackedScene" uid="uid://6horm3jye3eg" path="res://game_elements/on_belt_object.tscn" id="2_4tc6p"]
 [ext_resource type="PackedScene" uid="uid://dok0pyvneckou" path="res://game_elements/belt_turntable.tscn" id="3_8xeo6"]
 [ext_resource type="PackedScene" uid="uid://cwl267b67uw75" path="res://game_elements/belt_object_spawner.tscn" id="4_kq5bj"]
+[ext_resource type="PackedScene" uid="uid://dsv2is2aywp5w" path="res://game_elements/belt_object_despawner.tscn" id="5_hyshx"]
 
 [sub_resource type="Environment" id="Environment_ynf52"]
 
@@ -189,11 +190,17 @@ curve = SubResource("Curve3D_8p71y")
 ExitPathTurntable_EnterDirection = 2
 
 [node name="Belt_Object_Spawner_Example" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.752838)
 
 [node name="belt_object_spawner" parent="Belt_Object_Spawner_Example" node_paths=PackedStringArray("ExitPathNode") instance=ExtResource("4_kq5bj")]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -2.69722, 0, -2.94234)
 ExitPathNode = NodePath("../Show_Off_Spawned_Objs")
+Spawn_Rate_Seconds = 1.0
 
-[node name="Show_Off_Spawned_Objs" parent="Belt_Object_Spawner_Example" instance=ExtResource("1_bny65")]
+[node name="Show_Off_Spawned_Objs" parent="Belt_Object_Spawner_Example" node_paths=PackedStringArray("ExitPathDespawner") instance=ExtResource("1_bny65")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.697, 1, -2.942)
 curve = SubResource("Curve3D_eg1jk")
+ExitPathDespawner = NodePath("../belt_object_despawner")
+
+[node name="belt_object_despawner" parent="Belt_Object_Spawner_Example" instance=ExtResource("5_hyshx")]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 4.303, 0, -2.942)

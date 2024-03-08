@@ -1,4 +1,5 @@
 extends StaticBody3D
+class_name Belt_Object_Spawner
 
 #Exit to another Linked_Path3D
 @export var ExitPathNode:Path3D=null
@@ -17,12 +18,12 @@ func _ready():
 func _physics_process(delta):
 	#update current time
 	spawn_time += delta
-	print(spawn_time)
+	#print(spawn_time)
 	
 	if spawn_time > Spawn_Rate_Seconds:
 		#allow spawn object if no objects are on belt
 		if Spawn_Shute.get_child_count() == 0:
-			print("SPAWN OBJECT")
+			#print("SPAWN OBJECT")
 			var New_On_Belt_Obj = On_Belt_Objects.instantiate()
 			New_On_Belt_Obj.initial_object_type = On_Belt_Object.enum_belt_object_type.UNDEF
 			New_On_Belt_Obj.initial_velocity = 1.0

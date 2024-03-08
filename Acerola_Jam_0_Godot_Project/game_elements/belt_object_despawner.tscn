@@ -1,0 +1,50 @@
+[gd_scene load_steps=8 format=3 uid="uid://dsv2is2aywp5w"]
+
+[ext_resource type="Script" path="res://game_elements/belt_object_despawner.gd" id="1_aluh4"]
+[ext_resource type="PackedScene" uid="uid://crho7h6t4w6x7" path="res://composition_modules/Linked_Path3D.tscn" id="2_pfhlt"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_gurqk"]
+size = Vector3(1, 2, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_7rb28"]
+size = Vector3(1, 2, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jgy2a"]
+albedo_color = Color(0.498039, 0.180392, 0.0156863, 1)
+
+[sub_resource type="Curve3D" id="Curve3D_s40f3"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.1),
+"tilts": PackedFloat32Array(0, 0)
+}
+point_count = 2
+
+[sub_resource type="Curve3D" id="Curve3D_807b7"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+"tilts": PackedFloat32Array(0, 0)
+}
+point_count = 2
+
+[node name="belt_object_despawner" type="StaticBody3D"]
+script = ExtResource("1_aluh4")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("BoxShape3D_gurqk")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("BoxMesh_7rb28")
+surface_material_override/0 = SubResource("StandardMaterial3D_jgy2a")
+
+[node name="Death_Path" parent="." instance=ExtResource("2_pfhlt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+curve = SubResource("Curve3D_s40f3")
+
+[node name="Despawn_Shute" parent="." node_paths=PackedStringArray("ExitPathNode") instance=ExtResource("2_pfhlt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+curve = SubResource("Curve3D_807b7")
+ExitPathNode = NodePath("../Death_Path")
+
+[connection signal="child_entered_tree" from="Death_Path" to="." method="_on_death_path_child_entered_tree"]
