@@ -51,7 +51,7 @@ func _physics_process(delta):
 
 		#if this is the collider behind another object, delay until enough distance is in between
 		if Collision_Order == enum_collision_order.BEHIND: #we are behind
-			move_velocity = 0.0
+			move_velocity = -0.001 #may fix issues where two objects are perfectly backed into eachother
 			if Collision_Distance > follow_collision_distance:
 				move_velocity = initial_velocity
 				manage_collision = false

@@ -113,6 +113,7 @@ ExitPathNode = NodePath("../LinkedPath3d_B")
 [node name="OnBeltObject2" parent="LinkedPath3d_A" instance=ExtResource("2_4tc6p")]
 transform = Transform3D(-0.624254, 0, -0.78122, 0, 1, 0, 0.78122, 0, -0.624254, -1.47997, -0.0404658, -0.122137)
 progress = 0.5
+initial_velocity = 1.0
 
 [node name="LinkedPath3d_B" parent="." node_paths=PackedStringArray("ExitPathNode") instance=ExtResource("1_bny65")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.73099, 0, -3)
@@ -121,11 +122,16 @@ ExitPathNode = NodePath("../LinkedPath3D_C")
 
 [node name="OnBeltObject_BLOCKER" parent="LinkedPath3d_B" instance=ExtResource("2_4tc6p")]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, 0)
+initial_velocity = 0.75
 
 [node name="LinkedPath3D_C" parent="." node_paths=PackedStringArray("ExitPathNode") instance=ExtResource("1_bny65")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.730441, 0, 0)
 curve = SubResource("Curve3D_imtqh")
 ExitPathNode = NodePath("../LinkedPath3d_A")
+
+[node name="OnBeltObject_BLOCKER2" parent="LinkedPath3D_C" instance=ExtResource("2_4tc6p")]
+transform = Transform3D(-0.0268078, 0, -0.999641, 0, 1, 0, 0.999641, 0, -0.0268078, -0.0406827, 0.00118613, 0.0027281)
+initial_velocity = 0.5
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.052336, 0.99863, 0, -0.99863, 0.052336, 5.33666, 9.64089, 0)
