@@ -1,8 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://jvekwgk3g1bo"]
+[gd_scene load_steps=9 format=3 uid="uid://jvekwgk3g1bo"]
 
 [ext_resource type="PackedScene" uid="uid://crho7h6t4w6x7" path="res://composition_modules/Linked_Path3D.tscn" id="1_bny65"]
 [ext_resource type="PackedScene" uid="uid://6horm3jye3eg" path="res://game_elements/on_belt_object.tscn" id="2_4tc6p"]
 [ext_resource type="PackedScene" uid="uid://dok0pyvneckou" path="res://game_elements/belt_turntable.tscn" id="3_8xeo6"]
+
+[sub_resource type="Environment" id="Environment_ynf52"]
 
 [sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_6s5gt"]
 
@@ -20,12 +22,20 @@ _data = {
 }
 point_count = 2
 
-[sub_resource type="Environment" id="Environment_ynf52"]
+[sub_resource type="Curve3D" id="Curve3D_fuo21"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1),
+"tilts": PackedFloat32Array(0, 0)
+}
+point_count = 2
 
 [node name="Main" type="Node"]
 
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_ynf52")
+
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.783379, 0.621544, 0, -0.621544, 0.783379, 0, 4.47236, 3.9563)
+transform = Transform3D(-1, 5.43025e-08, -6.85127e-08, 0, 0.783693, 0.621148, 8.74228e-08, 0.621148, -0.783693, 0, 4.47236, -6.03047)
 
 [node name="TempFloor" type="StaticBody3D" parent="."]
 
@@ -47,12 +57,63 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.73099, 0, -3)
 curve = SubResource("Curve3D_qq6oo")
 ExitPathNode = NodePath("../LinkedPath3d_A")
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_ynf52")
-
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.052336, 0.99863, 0, -0.99863, 0.052336, 5.33666, 9.64089, 0)
 
-[node name="Belt_Turntable" parent="." instance=ExtResource("3_8xeo6")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.51706, 0, 0)
-Initial_Exit_Orientation = 1
+[node name="ExampleTurntable_SOUTH" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.30215, 0, -2.27109)
+
+[node name="Belt_Turntable_SOUTH" parent="ExampleTurntable_SOUTH" instance=ExtResource("3_8xeo6")]
+Turntable_Global_Direction = 2
+
+[node name="LinkedPath3D" parent="ExampleTurntable_SOUTH" node_paths=PackedStringArray("ExitPathTurntable") instance=ExtResource("1_bny65")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.82013e-05, 1, 1.53063)
+curve = SubResource("Curve3D_fuo21")
+ExitPathTurntable = NodePath("../Belt_Turntable_SOUTH")
+
+[node name="OnBeltObject_ExampleSouth" parent="ExampleTurntable_SOUTH/LinkedPath3D" instance=ExtResource("2_4tc6p")]
+initial_velocity = 1.0
+
+[node name="ExampleTurntable_EAST" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.13357, 0, -2.27109)
+
+[node name="Belt_Turntable_EAST" parent="ExampleTurntable_EAST" instance=ExtResource("3_8xeo6")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, 0)
+Turntable_Global_Direction = 1
+
+[node name="LinkedPath3D" parent="ExampleTurntable_EAST" node_paths=PackedStringArray("ExitPathTurntable") instance=ExtResource("1_bny65")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.82013e-05, 1, 1.53063)
+curve = SubResource("Curve3D_fuo21")
+ExitPathTurntable = NodePath("../Belt_Turntable_EAST")
+
+[node name="OnBeltObject_ExampleEast" parent="ExampleTurntable_EAST/LinkedPath3D" instance=ExtResource("2_4tc6p")]
+initial_velocity = 1.0
+
+[node name="ExampleTurntable_WEST" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.13357, 0, 1.42091)
+
+[node name="Belt_Turntable_WEST" parent="ExampleTurntable_WEST" instance=ExtResource("3_8xeo6")]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, 0)
+Turntable_Global_Direction = 3
+
+[node name="LinkedPath3D" parent="ExampleTurntable_WEST" node_paths=PackedStringArray("ExitPathTurntable") instance=ExtResource("1_bny65")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.82013e-05, 1, 1.53063)
+curve = SubResource("Curve3D_fuo21")
+ExitPathTurntable = NodePath("../Belt_Turntable_WEST")
+
+[node name="OnBeltObject_ExampleEast" parent="ExampleTurntable_WEST/LinkedPath3D" instance=ExtResource("2_4tc6p")]
+initial_velocity = 1.0
+
+[node name="ExampleTurntable_NORTH" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.30215, 0, 1.40578)
+
+[node name="Belt_Turntable_NORTH" parent="ExampleTurntable_NORTH" instance=ExtResource("3_8xeo6")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
+
+[node name="LinkedPath3D" parent="ExampleTurntable_NORTH" node_paths=PackedStringArray("ExitPathTurntable") instance=ExtResource("1_bny65")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.82013e-05, 1, 1.53063)
+curve = SubResource("Curve3D_fuo21")
+ExitPathTurntable = NodePath("../Belt_Turntable_NORTH")
+
+[node name="OnBeltObject_ExampleNorth" parent="ExampleTurntable_NORTH/LinkedPath3D" instance=ExtResource("2_4tc6p")]
+initial_velocity = 1.0

@@ -121,7 +121,7 @@ It may be slightly tedious but that fits the factory vibe..
 
 
 
-Game Components:
+Game Elements:
 Floor - detects fallen objects, subtracts score and removes objects?
 On_Belt_Object - sits on belts and moves with their directions, also has a named type for sorting and scoring purposes.
 Belt_Static - Static belts that are placed as part of scenario.. unsure if they'll ever switch direction
@@ -139,3 +139,7 @@ Dialogue Box
 Gameover Menu?
 Pause Menu?
 Game Start Menu
+
+
+Started development since most elements are defined and some exploration within the engine is required to make things work.
+This will also help me find the easy way and hard ways to make these game elements.

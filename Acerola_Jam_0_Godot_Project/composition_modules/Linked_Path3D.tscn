@@ -4,6 +4,6 @@
 
 [sub_resource type="Curve3D" id="Curve3D_4relk"]
 
-[node name="LinkedPath3d" type="Path3D"]
+[node name="LinkedPath3D" type="Path3D"]
 curve = SubResource("Curve3D_4relk")
 script = ExtResource("1_giwyu")

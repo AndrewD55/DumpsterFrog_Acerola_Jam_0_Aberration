@@ -8,6 +8,7 @@
 
 [node name="OnBeltObject" type="PathFollow3D"]
 rotation_mode = 1
+loop = false
 script = ExtResource("1_5hqyd")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
