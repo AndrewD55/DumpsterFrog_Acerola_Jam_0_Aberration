@@ -20,6 +20,11 @@ config/icon="res://icon.svg"
 AutoloadEventBus="*res://autoload_scripts/autoload_event_bus.gd"
 AutoloadSceneSwap="*res://autoload_scripts/autoload_scene_swap.gd"
 
+[layer_names]
+
+3d_physics/layer_1="All"
+3d_physics/layer_2="OnBeltObjects_Only"
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"

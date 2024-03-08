@@ -125,14 +125,14 @@ func _input(event):
 					if event.pressed:
 						self.rotate_belt(2)
 
-func _physics_process(delta):
+func _physics_process(_delta):
 	if Lock_Rotation == true:
 		Highlight.texture = RedHighlightTexture
 		#get current parent PathNode3D
 		var Exiting_Object_CurrentPathNode = Exiting_ObjectNode.get_parent()
 		#once it's on path OTHER THAN our entrance/exit path nodes, it must be on it's way. say goodbye!
 		if Exiting_Object_CurrentPathNode not in [Forward_ExitPathNode, Left_ExitPathNode, Right_ExitPathNode,Rear_EntrancePathNode,Left_EntrancePathNode,Right_EntrancePathNode]:
-			Exiting_ObjectNode =null
+			Exiting_ObjectNode=null
 			Lock_Rotation = false
 	else:
 		Highlight.texture = GreenHighlightTexture
@@ -146,8 +146,6 @@ func _on_mouse_exited():
 	
 func _on_exiting_object_area_3d_area_entered(area):
 	Exiting_ObjectNode = area.get_parent()
-	if Exiting_ObjectNode.get_class() == "On_Belt_Object":
-		Exiting_ObjectNode
 	Lock_Rotation = true
 	#When a belt object enters this area
 		#1.Get it's node
