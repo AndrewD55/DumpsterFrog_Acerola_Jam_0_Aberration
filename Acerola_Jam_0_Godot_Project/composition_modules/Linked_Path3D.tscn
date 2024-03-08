@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://crho7h6t4w6x7"]
+
+[ext_resource type="Script" path="res://composition_modules/Linked_Path3D.gd" id="1_giwyu"]
+
+[sub_resource type="Curve3D" id="Curve3D_4relk"]
+
+[node name="LinkedPath3d" type="Path3D"]
+curve = SubResource("Curve3D_4relk")
+script = ExtResource("1_giwyu")

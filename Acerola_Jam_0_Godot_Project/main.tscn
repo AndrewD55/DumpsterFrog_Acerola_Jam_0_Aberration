@@ -1,0 +1,57 @@
+[gd_scene load_steps=8 format=3 uid="uid://jvekwgk3g1bo"]
+
+[ext_resource type="PackedScene" uid="uid://crho7h6t4w6x7" path="res://composition_modules/Linked_Path3D.tscn" id="1_bny65"]
+[ext_resource type="PackedScene" uid="uid://6horm3jye3eg" path="res://game_elements/on_belt_object.tscn" id="2_4tc6p"]
+[ext_resource type="PackedScene" uid="uid://dok0pyvneckou" path="res://game_elements/belt_turntable.tscn" id="3_8xeo6"]
+
+[sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_6s5gt"]
+
+[sub_resource type="Curve3D" id="Curve3D_87ua0"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, -1.5, 0, 0, 0, 0, 0, -1.5, 0, 0, 0, 0, 0, 0, 0, -3),
+"tilts": PackedFloat32Array(0, 0)
+}
+point_count = 2
+
+[sub_resource type="Curve3D" id="Curve3D_qq6oo"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, 1.5, 0, 0, 0, 0, 0, 1.5, 0, 0, 0, 0, 0, 0, 0, 3),
+"tilts": PackedFloat32Array(0, 0)
+}
+point_count = 2
+
+[sub_resource type="Environment" id="Environment_ynf52"]
+
+[node name="Main" type="Node"]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.783379, 0.621544, 0, -0.621544, 0.783379, 0, 2.77256, 1.56411)
+
+[node name="TempFloor" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="TempFloor"]
+shape = SubResource("WorldBoundaryShape3D_6s5gt")
+
+[node name="LinkedPath3d_A" parent="." node_paths=PackedStringArray("ExitPathNode") instance=ExtResource("1_bny65")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.746545, 0, 0)
+curve = SubResource("Curve3D_87ua0")
+ExitPathNode = NodePath("../LinkedPath3d_B")
+
+[node name="OnBeltObject" parent="LinkedPath3d_A" instance=ExtResource("2_4tc6p")]
+transform = Transform3D(0.293378, 0, 0.955996, 0, 1, 0, -0.955996, 0, 0.293378, -0.296346, 0, -0.0430607)
+progress = 0.3
+initial_velocity = 1.0
+
+[node name="LinkedPath3d_B" parent="." node_paths=PackedStringArray("ExitPathNode") instance=ExtResource("1_bny65")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.73099, 0, -3)
+curve = SubResource("Curve3D_qq6oo")
+ExitPathNode = NodePath("../LinkedPath3d_A")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_ynf52")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.052336, 0.99863, 0, -0.99863, 0.052336, 5.33666, 9.64089, 0)
+
+[node name="Belt_Turntable" parent="." instance=ExtResource("3_8xeo6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.51706, 0, 0)

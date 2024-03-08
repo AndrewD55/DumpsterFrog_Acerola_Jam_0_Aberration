@@ -11,8 +11,14 @@ config_version=5
 [application]
 
 config/name="Acerola Jam 0 Godot Project"
+run/main_scene="res://main.tscn"
 config/features=PackedStringArray("4.2", "GL Compatibility")
 config/icon="res://icon.svg"
+
+[autoload]
+
+AutoloadEventBus="*res://autoload_scripts/autoload_event_bus.gd"
+AutoloadSceneSwap="*res://autoload_scripts/autoload_scene_swap.gd"
 
 [rendering]
 
