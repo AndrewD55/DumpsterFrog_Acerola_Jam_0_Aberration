@@ -171,7 +171,7 @@ curve = SubResource("Curve3D_xha6k")
 ExitPathNode = NodePath("../LinkedPath3D")
 
 [node name="OnBeltObject" parent="ExampleTurntable_SOUTH/LinkedPath3D_SOUTH_RETURN" instance=ExtResource("2_4tc6p")]
-transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0.598994, 0, 3.6)
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 1.10039, 0, 3.6)
 progress = 6.5
 initial_velocity = 1.0
 

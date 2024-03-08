@@ -133,6 +133,27 @@ func rotate_belt(LRMouse:int)->void:
 func _ready():
 	#set initial parameters
 	set_enter_shutes_thru_paths_exit_shutes(Turntable_Global_Direction)
+	#Set Exit Shutes Destinations
+	if NORTH_Destination != null:
+		North_Exit_Shute.set_exit_path_node(NORTH_Destination)
+	else:
+		North_Exit_Shute.set_exit_path_node(null)
+		
+	if EAST_Destination != null:
+		East_Exit_Shute.set_exit_path_node(EAST_Destination)
+	else:
+		East_Exit_Shute.set_exit_path_node(null)
+		
+	if SOUTH_Destination != null:
+		South_Exit_Shute.set_exit_path_node(SOUTH_Destination)
+	else:
+		South_Exit_Shute.set_exit_path_node(null)
+
+	if WEST_Destination != null:
+		West_Exit_Shute.set_exit_path_node(WEST_Destination)
+	else:
+		West_Exit_Shute.set_exit_path_node(null)
+		
 	Highlight.texture = GreenHighlightTexture #REPLACE THIS IF THE LOCK ROTATION IS NOT NEEDED.
 
 func _input(event):
@@ -216,6 +237,7 @@ func _physics_process(_delta):
 						West_Enter_Gate.set_exit_path_node(null)
 						Latch_Gate == true
 		else:
+			print("Gate Latched!")
 			#If Entry Shutes are updated upon rotation correctly it'll also be on it's way to a Thru Path;
 			#If Thru Paths are updated correctly it should be on it's way to the Exit Shute;
 			
