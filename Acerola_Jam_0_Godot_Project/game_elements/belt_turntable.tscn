@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://dok0pyvneckou"]
+[gd_scene load_steps=19 format=3 uid="uid://dok0pyvneckou"]
 
 [ext_resource type="Script" path="res://game_elements/belt_turntable.gd" id="1_utw1d"]
 [ext_resource type="PackedScene" uid="uid://crho7h6t4w6x7" path="res://composition_modules/Linked_Path3D.tscn" id="2_7w5hh"]
@@ -21,8 +21,17 @@ albedo_color = Color(0.129412, 0.129412, 0.129412, 1)
 [sub_resource type="BoxShape3D" id="BoxShape3D_g4buf"]
 size = Vector3(0.25, 0.25, 0.1)
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_rnpag"]
-size = Vector3(0.5, 0.5, 0.5)
+[sub_resource type="BoxShape3D" id="BoxShape3D_4yesq"]
+size = Vector3(0.5, 0.5, 0.1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_g0mtl"]
+size = Vector3(0.1, 0.5, 0.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_n6lca"]
+size = Vector3(0.5, 0.5, 0.1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_0530d"]
+size = Vector3(0.1, 0.5, 0.5)
 
 [node name="Belt_Turntable" type="StaticBody3D"]
 script = ExtResource("1_utw1d")
@@ -84,36 +93,36 @@ shape = SubResource("BoxShape3D_g4buf")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 
 [node name="North_Speed_Override" type="Area3D" parent="Entrance_Speed_Override_Areas"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0.75)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 1.2)
 input_ray_pickable = false
 monitorable = false
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Entrance_Speed_Override_Areas/North_Speed_Override"]
-shape = SubResource("BoxShape3D_rnpag")
+shape = SubResource("BoxShape3D_4yesq")
 
 [node name="East_Speed_Override" type="Area3D" parent="Entrance_Speed_Override_Areas"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.75, 0.25, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 0.25, 0)
 input_ray_pickable = false
 monitorable = false
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Entrance_Speed_Override_Areas/East_Speed_Override"]
-shape = SubResource("BoxShape3D_rnpag")
+shape = SubResource("BoxShape3D_g0mtl")
 
 [node name="South_Speed_Override" type="Area3D" parent="Entrance_Speed_Override_Areas"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, -0.75)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, -1.2)
 input_ray_pickable = false
 monitorable = false
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Entrance_Speed_Override_Areas/South_Speed_Override"]
-shape = SubResource("BoxShape3D_rnpag")
+shape = SubResource("BoxShape3D_n6lca")
 
 [node name="West_Speed_Override" type="Area3D" parent="Entrance_Speed_Override_Areas"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, 0.25, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2, 0.25, 0)
 input_ray_pickable = false
 monitorable = false
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Entrance_Speed_Override_Areas/West_Speed_Override"]
-shape = SubResource("BoxShape3D_rnpag")
+shape = SubResource("BoxShape3D_0530d")
 
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]

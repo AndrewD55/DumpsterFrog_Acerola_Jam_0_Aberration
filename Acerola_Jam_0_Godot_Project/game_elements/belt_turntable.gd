@@ -39,6 +39,7 @@ var current_ExitPathNode:Path3D=null
 
 var Exiting_ObjectNode:Node3D=null
 var Lock_Rotation:bool=false
+var Cannot_Exit_Invalid_Exit_Path:bool=false
 
 var Entry_Direction_Queue = []
 var Entry_Direction_Nodes = []
@@ -76,41 +77,41 @@ func rotate_belt(LRMouse:int)->void:
 				1:#rotate left
 					Turntable_Global_Direction = global_direction.WEST_XPOS
 					self.set_exitpath(WEST_ExitPathNode,WEST_Exit_local_orientation)
-					self.rotate_object_local(Vector3(0,1,0),PI/2)
+					BeltMesh.rotate_object_local(Vector3(0,1,0),PI/2)
 				2:#rotate right
 					Turntable_Global_Direction = global_direction.EAST_XNEG
 					self.set_exitpath(EAST_ExitPathNode,EAST_Exit_local_orientation)
-					self.rotate_object_local(Vector3(0,1,0),-PI/2)
+					BeltMesh.rotate_object_local(Vector3(0,1,0),-PI/2)
 		global_direction.EAST_XNEG:#>
 			match LRMouse:
 				1:#rotate left
 					Turntable_Global_Direction = global_direction.NORTH_ZPOS
 					self.set_exitpath(NORTH_ExitPathNode,NORTH_Exit_local_orientation)
-					self.rotate_object_local(Vector3(0,1,0),PI/2)
+					BeltMesh.rotate_object_local(Vector3(0,1,0),PI/2)
 				2:#rotate right
 					Turntable_Global_Direction = global_direction.SOUTH_ZNEG
 					self.set_exitpath(SOUTH_ExitPathNode,SOUTH_Exit_local_orientation)
-					self.rotate_object_local(Vector3(0,1,0),-PI/2)
+					BeltMesh.rotate_object_local(Vector3(0,1,0),-PI/2)
 		global_direction.SOUTH_ZNEG:#v
 			match LRMouse:
 				1:#rotate left
 					Turntable_Global_Direction = global_direction.EAST_XNEG
 					self.set_exitpath(EAST_ExitPathNode,EAST_Exit_local_orientation)
-					self.rotate_object_local(Vector3(0,1,0),PI/2)
+					BeltMesh.rotate_object_local(Vector3(0,1,0),PI/2)
 				2:#rotate right
 					Turntable_Global_Direction = global_direction.WEST_XPOS
 					self.set_exitpath(WEST_ExitPathNode,WEST_Exit_local_orientation)
-					self.rotate_object_local(Vector3(0,1,0),-PI/2)
+					BeltMesh.rotate_object_local(Vector3(0,1,0),-PI/2)
 		global_direction.WEST_XPOS:#<
 			match LRMouse:
 				1:#rotate left
 					Turntable_Global_Direction = global_direction.SOUTH_ZNEG
 					self.set_exitpath(SOUTH_ExitPathNode,SOUTH_Exit_local_orientation)
-					self.rotate_object_local(Vector3(0,1,0),PI/2)
+					BeltMesh.rotate_object_local(Vector3(0,1,0),PI/2)
 				2:#rotate right
 					Turntable_Global_Direction = global_direction.NORTH_ZPOS
 					self.set_exitpath(NORTH_ExitPathNode,NORTH_Exit_local_orientation)
-					self.rotate_object_local(Vector3(0,1,0),-PI/2)
+					BeltMesh.rotate_object_local(Vector3(0,1,0),-PI/2)
 
 
 # NORMAL INIT/INPUT/MAIN LOGIC
@@ -143,33 +144,38 @@ func _physics_process(_delta):
 		#get current parent PathNode3D
 		var Exiting_Object_CurrentPathNode = Exiting_ObjectNode.get_parent()
 		
-		
 		#once it's on path OTHER THAN our entrance/exit path nodes, it must be on it's way. say goodbye!
 		if Exiting_Object_CurrentPathNode not in [Forward_ExitPathNode, Left_ExitPathNode, Right_ExitPathNode,Rear_EntrancePathNode,Left_EntrancePathNode,Right_EntrancePathNode,null]:
 			Exiting_ObjectNode=null
 			Lock_Rotation = false
+			Cannot_Exit_Invalid_Exit_Path = false
 			
 		#if object has no next path, I'd like to unlock rotation so it'll kickout next valid path.. 
 		elif  Exiting_ObjectNode.next_path_node == null:
-			print("OBJECT HAS NO NEXT PATH")
 			Lock_Rotation = false
+			Cannot_Exit_Invalid_Exit_Path = true
 			
 	else:
 		Highlight.texture = GreenHighlightTexture
 			
-	#if Prev_Lock_Rotation == false and Lock_Rotation == true:
-		#Allow_Entrant = true
-		#After the lock rotation just ended, allow another object onto the belt
+	#After the lock rotation just ended, allow another object onto the belt (And Object not waiting to exit)
+	if Prev_Lock_Rotation == true and Lock_Rotation == false and Cannot_Exit_Invalid_Exit_Path == false:
+		Allow_Entrant = true
+		
 		#this is also where a delay could be added for ease of use.
-
+		#THIS NO LONGER WORKS BECAUSE I UNLOCK ROTATION FOR NO NEXT PATH
+	
 	if Entry_Direction_Queue.size() > 0:
-		#print(Entry_Direction_Queue)
-		#print(Entry_Direction_Nodes)
-		Entry_Direction_Queue.pop_front()
-		var Entering_Node = Entry_Direction_Nodes.pop_front()
-		Entering_Node.set_velocity(Entrant_Resume_Velocity)
-		Allow_Entrant = false
-		#print("ALLOW ENTRANT")
+		if Allow_Entrant == true:
+			print(Entry_Direction_Queue)
+			print(Entry_Direction_Nodes)
+			var Entering_Direction =Entry_Direction_Queue.pop_front()
+			var Entering_Node  = Entry_Direction_Nodes.pop_front()
+			Entering_Node.set_velocity(Entrant_Resume_Velocity)
+			Allow_Entrant = false
+			print("ALLOW ENTRANT")
+			print(Entering_Direction)
+			print(Entering_Node)
 			
 			
 	Prev_Lock_Rotation = Lock_Rotation
@@ -200,13 +206,19 @@ func _on_exiting_object_area_3d_area_entered(area):
 	# so I need 3 different blockers, not just one.
 	# I likely make up an order to admit each object, and still allow for rotation during the entry path
 	# may need a speed override if that decision is far too fast for normal reflexes.
+	
+	
+	#OKAY.. SOMETHING I SHOULD'VE KNOWN BETTER.
+	# Collisions act weird whenever jumping from belt to belt. 
+	#so when the object finally enters the turntable it registers as entering the 
+	#speed override area again. I'll resize the areas to solve this.
 func _on_north_speed_override_area_entered(area):
 	if Turntable_Global_Direction != global_direction.NORTH_ZPOS:
 		if area.is_in_group("OnBeltObjects"):
 			Entry_Direction_Queue.push_back(global_direction.NORTH_ZPOS)
 			var north_entrant = area.get_parent()
 			Entry_Direction_Nodes.push_back(north_entrant)
-			north_entrant.set_velocity(0.1)
+			north_entrant.set_velocity(0.0)
 		
 func _on_east_speed_override_area_entered(area):
 	if Turntable_Global_Direction != global_direction.EAST_XNEG:
@@ -214,7 +226,7 @@ func _on_east_speed_override_area_entered(area):
 			Entry_Direction_Queue.push_back(global_direction.EAST_XNEG)
 			var east_entrant = area.get_parent()
 			Entry_Direction_Nodes.push_back(east_entrant)
-			east_entrant.set_velocity(0.1)
+			east_entrant.set_velocity(0.0)
 
 func _on_south_speed_override_area_entered(area):
 	if Turntable_Global_Direction != global_direction.SOUTH_ZNEG:
@@ -222,7 +234,7 @@ func _on_south_speed_override_area_entered(area):
 			Entry_Direction_Queue.push_back(global_direction.SOUTH_ZNEG)
 			var south_entrant = area.get_parent()
 			Entry_Direction_Nodes.push_back(south_entrant)
-			south_entrant.set_velocity(0.1)
+			south_entrant.set_velocity(0.0)
 
 func _on_west_speed_override_area_entered(area):
 	if Turntable_Global_Direction != global_direction.WEST_XPOS:
@@ -230,7 +242,7 @@ func _on_west_speed_override_area_entered(area):
 			Entry_Direction_Queue.push_back(global_direction.WEST_XPOS)
 			var west_entrant = area.get_parent()
 			Entry_Direction_Nodes.push_back(west_entrant)
-			west_entrant.set_velocity(0.1)
+			west_entrant.set_velocity(0.0)
 
 	
 
