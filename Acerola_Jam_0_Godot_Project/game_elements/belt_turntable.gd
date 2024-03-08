@@ -173,7 +173,6 @@ func monitor_path_node_for_child(PathNode:Path3D):
 		return null
 
 func _physics_process(_delta):
-	
 	#There is no Object Traversing the Turntable
 	if Entrant_Object == null:
 		#Something is Queued
@@ -204,9 +203,9 @@ func _physics_process(_delta):
 					global_direction.WEST_XPOS:#<
 						West_Enter_Gate.set_exit_path_node(West_Enter_Shute)
 				Latch_Gate = false
-				print("OBJECT ENTERED")
-				print(Entrant_Object)
-				print(Entrant_Direction)
+				#print("OBJECT ENTERED")
+				#print(Entrant_Object)
+				#print(Entrant_Direction)
 
 	else:
 		#Entrant_Object is Known;    once Entrant_Object is null, queue will open again.
@@ -220,24 +219,27 @@ func _physics_process(_delta):
 					var monitor_not_null = monitor_path_node_for_child(North_Enter_Shute)
 					if monitor_not_null != null:
 						North_Enter_Gate.set_exit_path_node(null)
-						Latch_Gate == true
+						Latch_Gate = true
+						#print("Gate Latched!")
 				global_direction.EAST_XNEG:#>
 					var monitor_not_null = monitor_path_node_for_child(East_Enter_Shute)
 					if monitor_not_null != null:
 						East_Enter_Gate.set_exit_path_node(null)
-						Latch_Gate == true
+						Latch_Gate = true
+						#print("Gate Latched!")
 				global_direction.SOUTH_ZNEG:#v
 					var monitor_not_null = monitor_path_node_for_child(South_Enter_Shute)
 					if monitor_not_null != null:
 						South_Enter_Gate.set_exit_path_node(null)
-						Latch_Gate == true
+						Latch_Gate = true
+						#print("Gate Latched!")
 				global_direction.WEST_XPOS:#<
 					var monitor_not_null = monitor_path_node_for_child(West_Enter_Shute)
 					if monitor_not_null != null:
 						West_Enter_Gate.set_exit_path_node(null)
-						Latch_Gate == true
+						Latch_Gate = true
+						#print("Gate Latched!")
 		else:
-			print("Gate Latched!")
 			#If Entry Shutes are updated upon rotation correctly it'll also be on it's way to a Thru Path;
 			#If Thru Paths are updated correctly it should be on it's way to the Exit Shute;
 			
@@ -248,22 +250,22 @@ func _physics_process(_delta):
 				var monitor_not_null = monitor_path_node_for_child(North_Exit_Shute)
 				if monitor_not_null != null:
 					Entrant_Object = null #goodbye! 
-					print("Goodbye!")
+					#print("Goodbye!")
 			if EAST_Destination !=null:
 				var monitor_not_null = monitor_path_node_for_child(East_Exit_Shute)
 				if monitor_not_null != null:
 					Entrant_Object = null #goodbye! 
-					print("Goodbye!")
+					#print("Goodbye!")
 			if SOUTH_Destination != null:
 				var monitor_not_null = monitor_path_node_for_child(South_Exit_Shute)
 				if monitor_not_null != null:
 					Entrant_Object = null #goodbye! 
-					print("Goodbye!")
+					#print("Goodbye!")
 			if WEST_Destination != null:
 				var monitor_not_null = monitor_path_node_for_child(West_Exit_Shute)
 				if monitor_not_null != null:
 					Entrant_Object = null #goodbye! 
-					print("Goodbye!")
+					#print("Goodbye!")
 
 
 
