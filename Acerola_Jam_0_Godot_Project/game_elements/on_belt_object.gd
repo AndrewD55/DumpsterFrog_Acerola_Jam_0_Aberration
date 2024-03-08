@@ -30,8 +30,6 @@ var Collision_Order:enum_collision_order=enum_collision_order.UNDEF
 func _physics_process(delta):
 	if manage_collision == true:
 		var Collision_Distance:float = 0.0
-		
-
 		if Collision_Order == enum_collision_order.UNDEF:
 			#get other collider's direction relative to my local Z+ axis
 			var Collision_Position_Difference = Colliding_ObjectNode.global_transform.origin - self.global_transform.origin
@@ -40,7 +38,7 @@ func _physics_process(delta):
 				Collision_Order = enum_collision_order.AHEAD
 			else:
 				Collision_Order = enum_collision_order.BEHIND
-			print(Collision_Direction)
+			#print(Collision_Direction)
 			
 		#get distance between this collider's origin and the other collider
 		Collision_Distance = Colliding_ObjectNode.global_transform.origin.distance_to(self.global_transform.origin)

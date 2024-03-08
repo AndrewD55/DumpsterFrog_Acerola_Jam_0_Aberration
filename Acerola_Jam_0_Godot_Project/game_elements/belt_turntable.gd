@@ -153,6 +153,18 @@ func _on_exiting_object_area_3d_area_entered(area):
 		#(Out in Monitoring Logic)
 		#2 Once it's exit path becomes it's parent, then get nextpath again.
 		#3 Once it's nextpath becomes it's parent forget it exists and unlock rotation
+		
+
+func _on_entrance_serial_object_feed_area_entered(area):
+	pass # Replace with function body.
+	#BUILD THIS NEXT
+	#When objects enter the belt there needs to be an order to admit them in
+	#So that the player has time to make a decision out of the possible input three objects where each should go.
+	# so I need 3 different blockers, not just one.
+	# I likely make up an order to admit each object, and still allow for rotation during the entry path
+	# may need a speed override if that decision is far too fast for normal reflexes.
+	
+	
 
 func get_turntable_entrance(Incoming_Obj_Global_Direction:global_direction):
 #This is used to provide incoming objects which enter path to take.
@@ -203,6 +215,7 @@ func get_turntable_entrance(Incoming_Obj_Global_Direction:global_direction):
 						EntrancePathNode=Left_EntrancePathNode
 	return EntrancePathNode
 	
+
 
 
 
