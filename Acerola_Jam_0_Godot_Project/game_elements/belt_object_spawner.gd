@@ -82,3 +82,7 @@ func scripted_immeidate_spawn(belt_object_type:On_Belt_Object.enum_belt_object_t
 	New_On_Belt_Obj.initial_velocity = 1.0
 	New_On_Belt_Obj.follow_collision_distance = 0.75
 	Spawn_Shute.add_child(New_On_Belt_Obj)
+
+
+func _on_spawn_shute_child_exiting_tree(node):
+	pass # Replace with function body.

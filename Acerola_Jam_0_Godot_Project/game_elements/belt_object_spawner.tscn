@@ -46,3 +46,5 @@ curve = SubResource("Curve3D_807b7")
 [node name="Conveyor_LinkedPath3D_Graphical" parent="." instance=ExtResource("3_siwt2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 curve = SubResource("Curve3D_bp30w")
+
+[connection signal="child_exiting_tree" from="Spawn_Shute" to="." method="_on_spawn_shute_child_exiting_tree"]
