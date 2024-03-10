@@ -54,14 +54,14 @@ func _physics_process(delta):
 					
 					#determine if it's REFINED or DEFECT
 					var coinflip:float = randf()
-					# A 60% chance spawning Good Product
-					if (coinflip < Good_to_Defect_Ratio+bias and Number_Good_Products > 1) or Number_Bad_Products < 1: #HEADS
+					# A 60% chance spawning Good Product   +bias
+					if (coinflip < Good_to_Defect_Ratio and Number_Good_Products > 1) or Number_Bad_Products < 1: #HEADS
 						Number_Good_Products -= 1
 						New_On_Belt_Obj.initial_object_type = On_Belt_Object.enum_belt_object_type.REFINED
 					else: #TAILS  
 						Number_Bad_Products -= 1
 						New_On_Belt_Obj.initial_object_type = On_Belt_Object.enum_belt_object_type.DEFECT
-						bias += bias_rate
+						#bias += bias_rate
 					
 					New_On_Belt_Obj.initial_velocity = 1.0
 					New_On_Belt_Obj.follow_collision_distance = 0.75

@@ -16,8 +16,13 @@ var product_count:int = 0
 var current_score:int = 0
 
 func _ready():
+	#randomize seed.. potentially for the second time
+	randomize()
+	
 	#Begin Droning Noise
 	Audio_Droning.play()
+	
+	
 	
 	#Create Score tally functions for the despawner
 	EventBus.create_event("Add_Refined_Score",_Add_Refined_Score.bind())
