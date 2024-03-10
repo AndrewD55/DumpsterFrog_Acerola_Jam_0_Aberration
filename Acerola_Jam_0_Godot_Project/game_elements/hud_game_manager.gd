@@ -17,6 +17,10 @@ var game_state:int = 0
 
 
 
+
+#Record of Spawn Sequences Completed.
+var Spawn_Sequences_Completed:Array[StringName] = []
+
 #This is intended to specify spawn sequence parameters, and multiple could be defined in a state machine
 #however, the random sequence generation needs to be done in _ready
 var Spawn_Sequence_A_Dict:Dictionary = {
@@ -25,6 +29,14 @@ var Spawn_Sequence_A_Dict:Dictionary = {
 		"Belt_Obj_Sequence_array": [],
 		"Belt_Obj1_enum": On_Belt_Object.enum_belt_object_type.REFINED,
 		"Belt_Obj2_enum": On_Belt_Object.enum_belt_object_type.DEFECT}
+		
+		
+var Spawn_Sequence_A_WAVE2_Dict:Dictionary = {
+		"SpawnerID": StringName("SpawnA"),
+		"Spawn_Rate_Seconds_float": float(2.0),
+		"Belt_Obj_Sequence_array": [],
+		"Belt_Obj1_enum": On_Belt_Object.enum_belt_object_type.DEFECT,
+		"Belt_Obj2_enum": On_Belt_Object.enum_belt_object_type.REFINED}
 
 
 func _ready():	
@@ -34,6 +46,10 @@ func _ready():
 	#Create Score tally functions for the despawner
 	EventBus.create_event("Add_Refined_Score",_Add_Refined_Score.bind())
 	EventBus.create_event("Add_Defect_Score",_Add_Refined_Score.bind())
+	
+	#Record Spawn Sequences that have completed to inform game state changes. 
+	EventBus.create_event("Completed_Scripted_Spawn_Sequence",_Completed_Scripted_Spawn_Sequence.bind())
+	
 	
 	#generate random sequence for Spawn_Sequence_A_Dict
 	Spawn_Sequence_A_Dict["Belt_Obj_Sequence_array"] = generate_random_pattern_2_objs(7,3)
@@ -46,15 +62,32 @@ var time:float = 0.0
 func _physics_process(delta):
 	time += delta
 	
+	# I don't know if there's a better way to make a long scripted sequence for purely linear games?
 	match game_state:
 		0:
 			if time > 0.2:
 				game_state = 1
 		1:
+			print("WAVE1")
 			EventBus.trigger_event("Start_Scripted_Spawn_Sequence", Spawn_Sequence_A_Dict)
 			game_state = 2
-		2:
-			pass
+		2: 
+			if "SpawnA" in Spawn_Sequences_Completed:
+				Spawn_Sequences_Completed = []
+				time = 0.0
+				game_state = 3
+		3:
+			if time > 10.0:
+				print("WAVE2")
+				Spawn_Sequence_A_WAVE2_Dict["Belt_Obj_Sequence_array"] = generate_random_pattern_2_objs(15,7)
+				EventBus.trigger_event("Start_Scripted_Spawn_Sequence", Spawn_Sequence_A_WAVE2_Dict)
+				game_state = 4
+		4:
+			if "SpawnA" in Spawn_Sequences_Completed:
+				Spawn_Sequences_Completed = []
+				print("ALL WAVES COMPLETED")
+				game_state = 5
+			
 
 
 
@@ -93,6 +126,13 @@ func check_game_end():
 
 func update_score():
 	ScoreLabel.text = ("Score: %5d" % current_score)
+
+
+
+#events from spawner to return it's complete state
+func _Completed_Scripted_Spawn_Sequence(Completed_Spawner_Name:StringName):
+	Spawn_Sequences_Completed.append(Completed_Spawner_Name)
+
 
 #reminder:these are events from the Despawner; I need to manage them here next.
 func _Add_Refined_Score(score:int):

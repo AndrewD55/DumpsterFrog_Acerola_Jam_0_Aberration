@@ -37,7 +37,6 @@ func _physics_process(delta):
 	if belt_obj_sequence.size() > 0:
 		if time > spawn_rate_seconds:
 			if spawn_shute_vacant == true:
-
 				var New_On_Belt_Obj = On_Belt_Objects.instantiate()
 				
 				match belt_obj_sequence.pop_back():
@@ -53,9 +52,12 @@ func _physics_process(delta):
 				time = 0.0
 	else:
 		if spawn_sequence_active == true:
-			spawn_sequence_active = false
-			print("SPAWN SEQUENCE COMPLETED")
-			#Notify spawn sequence completed
+				#Notify spawn sequence completed
+			EventBus.trigger_event("Completed_Scripted_Spawn_Sequence", SpawnerID)
+			initialize_spawn_sequence=false
+			spawn_sequence_active=false
+			belt_obj_sequence=[]
+
 
 
 func _start_spawn_sequence(Spawn_Sequence_Dict:Dictionary):
@@ -69,10 +71,10 @@ func _start_spawn_sequence(Spawn_Sequence_Dict:Dictionary):
 		belt_obj_sequence = Spawn_Sequence_Dict["Belt_Obj_Sequence_array"]
 		belt_object1_type = Spawn_Sequence_Dict["Belt_Obj1_enum"]
 		belt_object2_type = Spawn_Sequence_Dict["Belt_Obj2_enum"]
-		print("SpawnerID matches! Begin Spawn!")
-	else:
-		print("SpawnerID does not match")
-		print(SpawnerID)
+		#print("SpawnerID matches! Begin Spawn!")
+	#else:
+		#print("SpawnerID does not match")
+		#print(SpawnerID)
 		
 		
 func scripted_immeidate_spawn(belt_object_type:On_Belt_Object.enum_belt_object_type):
