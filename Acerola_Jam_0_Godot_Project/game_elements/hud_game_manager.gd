@@ -10,10 +10,22 @@ extends Control
 @onready var WinLabel = $Win_Label
 @onready var Audio_Droning = $AudioStreamPlayer_Droning
 
-
-
 var product_count:int = 0
 var current_score:int = 0
+
+var game_state:int = 0
+
+
+
+#This is intended to specify spawn sequence parameters, and multiple could be defined in a state machine
+#however, the random sequence generation needs to be done in _ready
+var Spawn_Sequence_A_Dict:Dictionary = {
+		"SpawnerID": StringName("SpawnA"),
+		"Spawn_Rate_Seconds_float": float(2.0),
+		"Belt_Obj_Sequence_array": [],
+		"Belt_Obj1_enum": On_Belt_Object.enum_belt_object_type.REFINED,
+		"Belt_Obj2_enum": On_Belt_Object.enum_belt_object_type.DEFECT}
+
 
 func _ready():	
 	#Begin Droning Noise
@@ -23,14 +35,32 @@ func _ready():
 	EventBus.create_event("Add_Refined_Score",_Add_Refined_Score.bind())
 	EventBus.create_event("Add_Defect_Score",_Add_Refined_Score.bind())
 	
-	#generate random sequence
-	generate_random_pattern_2_objs(7,3)
+	#generate random sequence for Spawn_Sequence_A_Dict
+	Spawn_Sequence_A_Dict["Belt_Obj_Sequence_array"] = generate_random_pattern_2_objs(7,3)
 	
 	
 	
 	
-	#This is good enought for this game!!!
-	#feels like a better distributed sequence
+
+var time:float = 0.0
+func _physics_process(delta):
+	time += delta
+	
+	match game_state:
+		0:
+			if time > 0.2:
+				game_state = 1
+		1:
+			EventBus.trigger_event("Start_Scripted_Spawn_Sequence", Spawn_Sequence_A_Dict)
+			game_state = 2
+		2:
+			pass
+
+
+
+
+
+
 func generate_random_pattern_2_objs(common_quantity:int, rare_quantity:int):
 	#generates a random array sequence of 0s and 1s,
 	#representing an order to spawn object type 1 or 2
@@ -48,14 +78,8 @@ func generate_random_pattern_2_objs(common_quantity:int, rare_quantity:int):
 		if ((obj_queue[insert_index] != false) and (obj_queue[insert_index+1] !=false or insert_index == (total_quantity-1)) and (obj_queue[insert_index-1] !=false or insert_index == 0)): 
 			obj_queue[insert_index] = false
 			rare_quantity -= 1
-	print(obj_queue)
-	
-	
-	
-	
-	
-	
-	
+	if rare_quantity == 0:
+		return obj_queue
 	
 func check_game_end():
 	if product_count > 19:
@@ -70,6 +94,7 @@ func check_game_end():
 func update_score():
 	ScoreLabel.text = ("Score: %5d" % current_score)
 
+#reminder:these are events from the Despawner; I need to manage them here next.
 func _Add_Refined_Score(score:int):
 	current_score += score
 	product_count += 1

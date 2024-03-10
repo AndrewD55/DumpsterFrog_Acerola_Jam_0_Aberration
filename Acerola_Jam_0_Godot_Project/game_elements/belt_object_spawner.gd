@@ -3,76 +3,76 @@ class_name Belt_Object_Spawner
 
 #Exit to another Linked_Path3D
 @export var ExitPathNode:Path3D=null
-
-@export var Number_Good_Products:int=7
-@export var Number_Bad_Products:int=3
-var Total_Products:int = Number_Good_Products+Number_Bad_Products
-
-@export var Good_to_Defect_Ratio:float=0.6
-#This is some biasing math to try and break up streaks and
-#make the defects feel more rare..   the +2 is to make sure the bias can't go to 1.0
-#(Defect_to_Good_Ratio)/Number_Bad_Products+2
-var bias_rate:float = (1.0-Good_to_Defect_Ratio)/(Number_Bad_Products+2)
-var bias:float = 0.0
-
-#I'm starting to think the best statitistic solution
-# is to predetermine the results and then use critera to shuffle and break up
-# any massive streaks.. But I may consider this Good Enough for now. 
-
-
-
-@export var Spawn_Rate_Seconds:float=3.0
-var spawn_time:float=0.0
-
+@export var SpawnerID:StringName="undef"
 
 var On_Belt_Objects = load("res://game_elements/on_belt_object.tscn")
 @onready var Spawn_Shute = $Spawn_Shute
 
-var more_products_to_spawn = true
+var time:float
+var spawn_shute_vacant:bool = true
+
+
+#scripted_spawn_sequence local variables
+var initialize_spawn_sequence:bool=false
+var spawn_sequence_active:bool=false
+var spawn_rate_seconds:float=0.0
+var belt_obj_sequence:Array[bool]= []
+var belt_object1_type:On_Belt_Object.enum_belt_object_type = On_Belt_Object.enum_belt_object_type.REFINED
+var belt_object2_type:On_Belt_Object.enum_belt_object_type = On_Belt_Object.enum_belt_object_type.REFINED
 
 func _ready():
 	Spawn_Shute.set_exit_path_node(ExitPathNode)
+	EventBus.create_event("Start_Scripted_Spawn_Sequence", _start_spawn_sequence.bind())
 	
-func _physics_process(delta):
 
-	if more_products_to_spawn == true:
-		#update current time
-		spawn_time += delta
-		#print(spawn_time)
+func _physics_process(delta):
+	#update current time
+	time += delta
+
+	if initialize_spawn_sequence == true:
+		time = 0.0
+		initialize_spawn_sequence = false
+		spawn_sequence_active = true
+
+	if belt_obj_sequence.size() > 0:
+		if time > spawn_rate_seconds:
+			if spawn_shute_vacant == true:
+
+				var New_On_Belt_Obj = On_Belt_Objects.instantiate()
 				
-		if spawn_time > Spawn_Rate_Seconds:
-			#allow spawn object if no objects are on belt
-			if Spawn_Shute.get_child_count() == 0:
-				#print("SPAWN OBJECT")
-		
-				#still objects to spawn
-				if Total_Products > 0:
-					Total_Products -= 1
-					
-					#instantiate object
-					var New_On_Belt_Obj = On_Belt_Objects.instantiate()
-					
-					#determine if it's REFINED or DEFECT
-					var coinflip:float = randf()
-					# A 60% chance spawning Good Product   +bias
-					if (coinflip < Good_to_Defect_Ratio and Number_Good_Products > 1) or Number_Bad_Products < 1: #HEADS
-						Number_Good_Products -= 1
-						New_On_Belt_Obj.initial_object_type = On_Belt_Object.enum_belt_object_type.REFINED
-					else: #TAILS  
-						Number_Bad_Products -= 1
-						New_On_Belt_Obj.initial_object_type = On_Belt_Object.enum_belt_object_type.DEFECT
-						#bias += bias_rate
-					
-					New_On_Belt_Obj.initial_velocity = 1.0
-					New_On_Belt_Obj.follow_collision_distance = 0.75
-					Spawn_Shute.add_child(New_On_Belt_Obj)
-					spawn_time = 0.0
-					
-					
-				else:
-					#print("CANNOT SPAWN ANYMORE PRODUCTS")
-					#print("EMIT GAME FINISHED SIGNAL")
-					more_products_to_spawn = false
+				match belt_obj_sequence.pop_back():
+					true: #Common Object Type 
+						New_On_Belt_Obj.initial_object_type = belt_object1_type
+					false: #Rarer Object Type
+						New_On_Belt_Obj.initial_object_type = belt_object2_type
+						
+				New_On_Belt_Obj.initial_velocity = 1.0
+				New_On_Belt_Obj.follow_collision_distance = 0.75
+				Spawn_Shute.add_child(New_On_Belt_Obj)
+				#set to wait until next spawn time.
+				time = 0.0
+	else:
+		if spawn_sequence_active == true:
+			spawn_sequence_active = false
+			print("SPAWN SEQUENCE COMPLETED")
+			#Notify spawn sequence completed
+
+
+func _start_spawn_sequence(Spawn_Sequence_Dict:Dictionary):
+	#spawn_rate_seconds - used to specify when spawns should occur
+	#belt_obj_sequence  - an array of booleans that specifies which object should spawn next
+	#belt_object1_type  - what type of object should be used for type1
+	#belt_object2_type  - what type of object should be used for type2
+	if Spawn_Sequence_Dict["SpawnerID"] == SpawnerID:
+		initialize_spawn_sequence = true
+		spawn_rate_seconds = Spawn_Sequence_Dict["Spawn_Rate_Seconds_float"]
+		belt_obj_sequence = Spawn_Sequence_Dict["Belt_Obj_Sequence_array"]
+		belt_object1_type = Spawn_Sequence_Dict["Belt_Obj1_enum"]
+		belt_object2_type = Spawn_Sequence_Dict["Belt_Obj2_enum"]
+		print("SpawnerID matches! Begin Spawn!")
+	else:
+		print("SpawnerID does not match")
+		print(SpawnerID)
 		
 		
 func scripted_immeidate_spawn(belt_object_type:On_Belt_Object.enum_belt_object_type):
@@ -85,4 +85,7 @@ func scripted_immeidate_spawn(belt_object_type:On_Belt_Object.enum_belt_object_t
 
 
 func _on_spawn_shute_child_exiting_tree(node):
-	pass # Replace with function body.
+	spawn_shute_vacant = true
+
+func _on_spawn_shute_child_entered_tree(node):
+	spawn_shute_vacant = false
