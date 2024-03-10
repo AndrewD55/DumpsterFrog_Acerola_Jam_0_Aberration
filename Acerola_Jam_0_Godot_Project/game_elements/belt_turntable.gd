@@ -33,10 +33,19 @@ var graphical_towards_curve = load("res://game_elements/belt_turntable_graphic_c
 enum global_direction {NORTH_ZPOS, EAST_XNEG, SOUTH_ZNEG, WEST_XPOS }
 
 @export var Turntable_Global_Direction:global_direction
+
+@export var NORTH_Player_Allowed_Rotation:bool=false
+@export var EAST_Player_Allowed_Rotation:bool=false
+@export var SOUTH_Player_Allowed_Rotation:bool=false
+@export var WEST_Player_Allowed_Rotation:bool=false
+
 @export var NORTH_Destination:Path3D=null
 @export var EAST_Destination:Path3D=null
 @export var SOUTH_Destination:Path3D=null
 @export var WEST_Destination:Path3D=null
+
+
+
 
 var Exiting_ObjectNode:Node3D=null
 
@@ -92,44 +101,59 @@ func set_enter_shutes_thru_paths_exit_shutes()->void:
 			else:
 				set_thrupaths_exit_shute(null)
 
+#This allows me to set the absolute direction of the turntable;
+#including the starting direction!
+func set_turntable_direction(set_direction:global_direction):
+	match set_direction:
+		global_direction.NORTH_ZPOS:#^
+			BeltMesh.rotation = Vector3(0,PI,0)
+		global_direction.EAST_XNEG:#>
+			BeltMesh.rotation = Vector3(0,PI/2,0)
+		global_direction.SOUTH_ZNEG:#v
+			BeltMesh.rotation = Vector3(0,0,0)
+		global_direction.WEST_XPOS:#<
+			BeltMesh.rotation = Vector3(0,3*PI/2,0)
 
-#func animate_rotate(rotate_from:global_direction, rotate_to:global_direction):
+	Turntable_Global_Direction = set_direction
+	set_enter_shutes_thru_paths_exit_shutes()
+
 
 func rotate_belt(LRMouse:int)->void:
 	#rotate belt model and set Turntable_Global_Direction for proper input directions
-	match Turntable_Global_Direction:
-		global_direction.NORTH_ZPOS:#^
-			match LRMouse:
-				1:#rotate left
-					Turntable_Global_Direction = global_direction.WEST_XPOS
-					BeltMesh.rotate_object_local(Vector3(0,1,0),PI/2)
-				2:#rotate right
-					Turntable_Global_Direction = global_direction.EAST_XNEG
-					BeltMesh.rotate_object_local(Vector3(0,1,0),-PI/2)
-		global_direction.EAST_XNEG:#>
-			match LRMouse:
-				1:#rotate left
-					Turntable_Global_Direction = global_direction.NORTH_ZPOS
-					BeltMesh.rotate_object_local(Vector3(0,1,0),PI/2)
-				2:#rotate right
-					Turntable_Global_Direction = global_direction.SOUTH_ZNEG
-					BeltMesh.rotate_object_local(Vector3(0,1,0),-PI/2)
-		global_direction.SOUTH_ZNEG:#v
-			match LRMouse:
-				1:#rotate left
-					Turntable_Global_Direction = global_direction.EAST_XNEG
-					BeltMesh.rotate_object_local(Vector3(0,1,0),PI/2)
-				2:#rotate right
-					Turntable_Global_Direction = global_direction.WEST_XPOS
-					BeltMesh.rotate_object_local(Vector3(0,1,0),-PI/2)
-		global_direction.WEST_XPOS:#<
-			match LRMouse:
-				1:#rotate left
-					Turntable_Global_Direction = global_direction.SOUTH_ZNEG
-					BeltMesh.rotate_object_local(Vector3(0,1,0),PI/2)
-				2:#rotate right
-					Turntable_Global_Direction = global_direction.NORTH_ZPOS
-					BeltMesh.rotate_object_local(Vector3(0,1,0),-PI/2)
+	var Allowed_Rotations = [NORTH_Player_Allowed_Rotation,EAST_Player_Allowed_Rotation,SOUTH_Player_Allowed_Rotation,WEST_Player_Allowed_Rotation]
+	match LRMouse:
+		1:#rotate left
+			var desired_rotation = Turntable_Global_Direction - 1
+			if desired_rotation == -1:
+				desired_rotation = 3
+			if Allowed_Rotations[desired_rotation] != false:
+				match desired_rotation:
+					0:
+						Turntable_Global_Direction=global_direction.NORTH_ZPOS
+					1:
+						Turntable_Global_Direction=global_direction.EAST_XNEG
+					2:
+						Turntable_Global_Direction=global_direction.SOUTH_ZNEG
+					3:
+						Turntable_Global_Direction=global_direction.WEST_XPOS
+						
+		2:#rotate right
+			var desired_rotation = Turntable_Global_Direction + 1
+			if desired_rotation == 4:
+				desired_rotation = 0
+			if Allowed_Rotations[desired_rotation] != false:
+				match desired_rotation:
+					0:
+						Turntable_Global_Direction=global_direction.NORTH_ZPOS
+					1:
+						Turntable_Global_Direction=global_direction.EAST_XNEG
+					2:
+						Turntable_Global_Direction=global_direction.SOUTH_ZNEG
+					3:
+						Turntable_Global_Direction=global_direction.WEST_XPOS
+						
+	#handle turntable rotation
+	set_turntable_direction(Turntable_Global_Direction)
 	#Update all Enter_Shutes -> Thru_Paths -> Exit_Shutes with new Turntable Global Direction
 	set_enter_shutes_thru_paths_exit_shutes()
 
@@ -137,9 +161,8 @@ func rotate_belt(LRMouse:int)->void:
 # NORMAL INIT/INPUT/MAIN LOGIC
 func _ready():
 	#set initial parameters
+	set_turntable_direction(Turntable_Global_Direction)
 	set_enter_shutes_thru_paths_exit_shutes()
-	
-	
 	
 	#Set Exit Shutes Destinations
 	if NORTH_Destination != null:
