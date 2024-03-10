@@ -8,11 +8,17 @@ extends Control
 
 @onready var ScoreLabel = $Score_Label
 @onready var WinLabel = $Win_Label
+@onready var Audio_Droning = $AudioStreamPlayer_Droning
+
+
 
 var product_count:int = 0
 var current_score:int = 0
 
 func _ready():
+	#Begin Droning Noise
+	Audio_Droning.play()
+	
 	#Create Score tally functions for the despawner
 	EventBus.create_event("Add_Refined_Score",_Add_Refined_Score.bind())
 	EventBus.create_event("Add_Defect_Score",_Add_Refined_Score.bind())

@@ -4,7 +4,6 @@ class_name Belt_Turntable_Path3D
 @onready var Highlight = $Mouseover_Highlight
 var GreenHighlightTexture:Texture2D = load("res://2D_Media/Sprites/Mouseover_Highlight_V0_Green.png")
 
-
 @onready var BeltMesh = $MeshInstance3D
 
 @onready var North_Enter_Gate = $Entrance_Gates_Shutes/North_Enter_Gate

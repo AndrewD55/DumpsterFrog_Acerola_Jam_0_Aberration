@@ -1,0 +1,14 @@
+Sound Sources:
+
+mechanical_room_startup by reg7783
+https://freesound.org/people/reg7783/sounds/725190/
+
+
+Using Audacity to edit sounds.
+
+
+Sounds I want;
+- Background; Droning sounds of belts moving *Done
+- Indicator; some sound to play when objects enter the turntable  *Done *NOPE.. That sounds really annoying actually. 
+- Effect; Some sound to play when objects are despawned?
+- Effect; some sound top lay when objecst are spawned? (Unsure about this.. may pollute sound space)
