@@ -4,6 +4,7 @@ class_name Belt_Turntable_Path3D
 @onready var Highlight = $Mouseover_Highlight
 var GreenHighlightTexture:Texture2D = load("res://2D_Media/Sprites/Mouseover_Highlight_V0_Green.png")
 
+
 @onready var BeltMesh = $MeshInstance3D
 
 @onready var North_Enter_Gate = $Entrance_Gates_Shutes/North_Enter_Gate
@@ -19,6 +20,12 @@ var GreenHighlightTexture:Texture2D = load("res://2D_Media/Sprites/Mouseover_Hig
 @onready var East_Exit_Shute = $Exit_Shutes/East_Exit_Shute
 @onready var South_Exit_Shute = $Exit_Shutes/South_Exit_Shute
 @onready var West_Exit_Shute = $Exit_Shutes/West_Exit_Shute
+
+var graphical_towards_curve = load("res://game_elements/belt_turntable_graphic_conveyor_towards.tres")
+@onready var North_Graphical_Conveyor = $Graphical_Paths/North_Graphical_Conveyor_LinkedPath3D
+@onready var East_Graphical_Conveyor = $Graphical_Paths/East_Graphical_Conveyor_LinkedPath3D
+@onready var South_Graphical_Conveyor = $Graphical_Paths/South_Graphical_Conveyor_LinkedPath3D
+@onready var West_Graphical_Conveyor = $Graphical_Paths/West_Graphical_Conveyor_LinkedPath3D
 
 @onready var Rear_Thru_Path = $MeshInstance3D/Thru_Paths/Rear_Thru_Path
 @onready var Right_Thru_Path = $MeshInstance3D/Thru_Paths/Right_Thru_Path
@@ -132,26 +139,33 @@ func rotate_belt(LRMouse:int)->void:
 func _ready():
 	#set initial parameters
 	set_enter_shutes_thru_paths_exit_shutes()
+	
+	
+	
 	#Set Exit Shutes Destinations
 	if NORTH_Destination != null:
 		North_Exit_Shute.set_exit_path_node(NORTH_Destination)
 	else:
 		North_Exit_Shute.set_exit_path_node(null)
+		North_Graphical_Conveyor.curve = graphical_towards_curve
 		
 	if EAST_Destination != null:
 		East_Exit_Shute.set_exit_path_node(EAST_Destination)
 	else:
 		East_Exit_Shute.set_exit_path_node(null)
+		East_Graphical_Conveyor.curve = graphical_towards_curve
 		
 	if SOUTH_Destination != null:
 		South_Exit_Shute.set_exit_path_node(SOUTH_Destination)
 	else:
 		South_Exit_Shute.set_exit_path_node(null)
+		South_Graphical_Conveyor.curve = graphical_towards_curve
 
 	if WEST_Destination != null:
 		West_Exit_Shute.set_exit_path_node(WEST_Destination)
 	else:
 		West_Exit_Shute.set_exit_path_node(null)
+		West_Graphical_Conveyor.curve = graphical_towards_curve
 		
 	Highlight.texture = GreenHighlightTexture #REPLACE THIS IF THE LOCK ROTATION IS NOT NEEDED.
 

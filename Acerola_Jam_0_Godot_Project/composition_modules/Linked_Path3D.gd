@@ -10,7 +10,6 @@ extends Path3D
 #or Exit onto a Despawner
 @export var ExitPathDespawner:Belt_Object_Despawner=null
 
-
 func set_exit_path_node(new_exit_path_node:Path3D) -> void:
 	ExitPathNode = new_exit_path_node
 

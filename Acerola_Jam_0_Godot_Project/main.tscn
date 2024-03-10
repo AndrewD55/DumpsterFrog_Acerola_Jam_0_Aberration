@@ -22,17 +22,17 @@ point_count = 2
 
 [sub_resource type="Curve3D" id="Curve3D_3btxb"]
 _data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, -1, 0, 2),
-"tilts": PackedFloat32Array(0, 0, 0)
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.45, 0, 0, 1.5, 0, 0, 0, 0, 0, 0, -0.5, 0, 2, 0, 0, 0, 0, 0, 0, -1, 0, 2),
+"tilts": PackedFloat32Array(0, 0, 0, 0)
 }
-point_count = 3
+point_count = 4
 
 [sub_resource type="Curve3D" id="Curve3D_4006t"]
 _data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, -2, 0, 1),
-"tilts": PackedFloat32Array(0, 0, 0)
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.45, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, -0.5, 0, 1, 0, 0, 0, 0, 0, 0, -2, 0, 1),
+"tilts": PackedFloat32Array(0, 0, 0, 0)
 }
-point_count = 3
+point_count = 4
 
 [sub_resource type="Curve3D" id="Curve3D_270gg"]
 _data = {
@@ -66,10 +66,12 @@ shape = SubResource("WorldBoundaryShape3D_6s5gt")
 [node name="belt_object_spawner_A" parent="." node_paths=PackedStringArray("ExitPathNode") instance=ExtResource("4_kq5bj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -5)
 ExitPathNode = NodePath("../Conveyor_LinkedPath3D_A_to_C")
+Spawn_Rate_Seconds = 2.5
 
 [node name="belt_object_spawner_B" parent="." node_paths=PackedStringArray("ExitPathNode") instance=ExtResource("4_kq5bj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
 ExitPathNode = NodePath("../Conveyor_LinkedPath3D_B_to_C")
+Spawn_Rate_Seconds = 2.5
 
 [node name="Conveyor_LinkedPath3D_B_to_C" parent="." node_paths=PackedStringArray("ExitPathTurntable") instance=ExtResource("4_2s213")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -4)

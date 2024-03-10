@@ -1,20 +1,37 @@
-[gd_scene load_steps=22 format=3 uid="uid://dok0pyvneckou"]
+[gd_scene load_steps=23 format=3 uid="uid://dok0pyvneckou"]
 
 [ext_resource type="Script" path="res://game_elements/belt_turntable.gd" id="1_utw1d"]
 [ext_resource type="PackedScene" uid="uid://crho7h6t4w6x7" path="res://composition_modules/Linked_Path3D.tscn" id="2_7w5hh"]
 [ext_resource type="Texture2D" uid="uid://bs3pm4y6j58h4" path="res://2D_Media/Sprites/Temp_Direction_Arrow_V0.png" id="2_b20g6"]
+[ext_resource type="Shader" path="res://2D_Media/2D_Godot_Material_Shaders/ConveyorBelt.gdshader" id="2_c15lr"]
 [ext_resource type="Curve3D" uid="uid://dya28qelk13vt" path="res://game_elements/belt_turntable_entrance_rear_curve3d.tres" id="3_nd0uo"]
 [ext_resource type="Curve3D" uid="uid://daga0jiq0ilrj" path="res://game_elements/belt_turntable_entrance_right_curve3d.tres" id="4_cys10"]
 [ext_resource type="Curve3D" uid="uid://bmu1jt0mj3biu" path="res://game_elements/belt_turntable_entrance_left_curve3d.tres" id="5_oy1c7"]
 [ext_resource type="Curve3D" uid="uid://bpnl3se0if1gj" path="res://game_elements/Exit_Shutes_curve3d.tres" id="8_g23qn"]
+[ext_resource type="PackedScene" uid="uid://bjlnaliaoxaam" path="res://composition_modules/Conveyor_Linked_Path3D.tscn" id="9_ar5k1"]
+[ext_resource type="Curve3D" uid="uid://xv8r8811yq4q" path="res://game_elements/belt_turntable_graphic_conveyor_away.tres" id="10_ahd2b"]
 [ext_resource type="Texture2D" uid="uid://clyrtms0yfxmj" path="res://2D_Media/Sprites/Mouseover_Highlight_V0_Green.png" id="10_wiyli"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_it444"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_tlm7r"]
+size = Vector3(1, 0.95, 1)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nrd52"]
 albedo_color = Color(0.129412, 0.129412, 0.129412, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4pyar"]
+render_priority = 0
+shader = ExtResource("2_c15lr")
+shader_parameter/color_gap = Color(0.615686, 0.654902, 0, 1)
+shader_parameter/color_stripe = Color(0.27451, 0.27451, 0.27451, 1)
+shader_parameter/divisions = 10.0
+shader_parameter/stripe_bias = 2.5
+shader_parameter/speed = 1.0
+shader_parameter/angle = -1.571
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_dbx5t"]
+size = Vector2(0.95, 0.95)
 
 [sub_resource type="Curve3D" id="Curve3D_7kxka"]
 _data = {
@@ -58,34 +75,6 @@ _data = {
 }
 point_count = 2
 
-[sub_resource type="Curve3D" id="Curve3D_ohyja"]
-_data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, -0.25, 0, 0, 0, 0, 0, 0, 0, 0, 0.25),
-"tilts": PackedFloat32Array(0, 0)
-}
-point_count = 2
-
-[sub_resource type="Curve3D" id="Curve3D_fnlr3"]
-_data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, -0.25, 0, 0, 0, 0, 0, 0, 0, 0, 0.25),
-"tilts": PackedFloat32Array(0, 0)
-}
-point_count = 2
-
-[sub_resource type="Curve3D" id="Curve3D_e76vg"]
-_data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, -0.25, 0, 0, 0, 0, 0, 0, 0, 0, 0.25),
-"tilts": PackedFloat32Array(0, 0)
-}
-point_count = 2
-
-[sub_resource type="Curve3D" id="Curve3D_edkil"]
-_data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, -0.25, 0, 0, 0, 0, 0, 0, 0, 0, 0.25),
-"tilts": PackedFloat32Array(0, 0)
-}
-point_count = 2
-
 [node name="Belt_Turntable" type="StaticBody3D"]
 script = ExtResource("1_utw1d")
 
@@ -97,6 +86,11 @@ shape = SubResource("BoxShape3D_it444")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 mesh = SubResource("BoxMesh_tlm7r")
 surface_material_override/0 = SubResource("StandardMaterial3D_nrd52")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="MeshInstance3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+material_override = SubResource("ShaderMaterial_4pyar")
+mesh = SubResource("PlaneMesh_dbx5t")
 
 [node name="Thru_Paths" type="Node3D" parent="MeshInstance3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
@@ -111,7 +105,7 @@ curve = ExtResource("4_cys10")
 curve = ExtResource("5_oy1c7")
 
 [node name="Arrow" type="Sprite3D" parent="MeshInstance3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.511285, 0)
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0.511285, 0)
 axis = 1
 texture = ExtResource("2_b20g6")
 
@@ -175,80 +169,24 @@ curve = ExtResource("8_g23qn")
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0.75, 0, 0)
 curve = ExtResource("8_g23qn")
 
-[node name="Graphical_Paths_PLEASE_DONT_USE" type="Node3D" parent="."]
+[node name="Graphical_Paths" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 
-[node name="North_Graphical" parent="Graphical_Paths_PLEASE_DONT_USE" instance=ExtResource("2_7w5hh")]
+[node name="North_Graphical_Conveyor_LinkedPath3D" parent="Graphical_Paths" instance=ExtResource("9_ar5k1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.75)
-curve = SubResource("Curve3D_ohyja")
+curve = ExtResource("10_ahd2b")
 
-[node name="CSGPolygon3D_BeltShape" type="CSGPolygon3D" parent="Graphical_Paths_PLEASE_DONT_USE/North_Graphical"]
-snap = 1e-06
-polygon = PackedVector2Array(-0.5, -0.05, -0.45, 0, 0.45, 0, 0.5, -0.05)
-mode = 2
-path_node = NodePath("..")
-path_interval_type = 0
-path_interval = 1.0
-path_simplify_angle = 0.0
-path_rotation = 2
-path_local = true
-path_continuous_u = true
-path_u_distance = 1.0
-path_joined = false
-
-[node name="East_Graphical" parent="Graphical_Paths_PLEASE_DONT_USE" instance=ExtResource("2_7w5hh")]
+[node name="East_Graphical_Conveyor_LinkedPath3D" parent="Graphical_Paths" instance=ExtResource("9_ar5k1")]
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -0.75, 0, 0)
-curve = SubResource("Curve3D_fnlr3")
+curve = ExtResource("10_ahd2b")
 
-[node name="CSGPolygon3D_BeltShape" type="CSGPolygon3D" parent="Graphical_Paths_PLEASE_DONT_USE/East_Graphical"]
-snap = 1e-06
-polygon = PackedVector2Array(-0.5, -0.05, -0.45, 0, 0.45, 0, 0.5, -0.05)
-mode = 2
-path_node = NodePath("..")
-path_interval_type = 0
-path_interval = 1.0
-path_simplify_angle = 0.0
-path_rotation = 2
-path_local = true
-path_continuous_u = true
-path_u_distance = 1.0
-path_joined = false
+[node name="South_Graphical_Conveyor_LinkedPath3D" parent="Graphical_Paths" instance=ExtResource("9_ar5k1")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, -0.75)
+curve = ExtResource("10_ahd2b")
 
-[node name="South_Graphical" parent="Graphical_Paths_PLEASE_DONT_USE" instance=ExtResource("2_7w5hh")]
-transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, 0, -0.75)
-curve = SubResource("Curve3D_e76vg")
-
-[node name="CSGPolygon3D_BeltShape" type="CSGPolygon3D" parent="Graphical_Paths_PLEASE_DONT_USE/South_Graphical"]
-snap = 1e-06
-polygon = PackedVector2Array(-0.5, -0.05, -0.45, 0, 0.45, 0, 0.5, -0.05)
-mode = 2
-path_node = NodePath("..")
-path_interval_type = 0
-path_interval = 1.0
-path_simplify_angle = 0.0
-path_rotation = 2
-path_local = true
-path_continuous_u = true
-path_u_distance = 1.0
-path_joined = false
-
-[node name="West_Graphical" parent="Graphical_Paths_PLEASE_DONT_USE" instance=ExtResource("2_7w5hh")]
+[node name="West_Graphical_Conveyor_LinkedPath3D" parent="Graphical_Paths" instance=ExtResource("9_ar5k1")]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0.75, 0, 0)
-curve = SubResource("Curve3D_edkil")
-
-[node name="CSGPolygon3D_BeltShape" type="CSGPolygon3D" parent="Graphical_Paths_PLEASE_DONT_USE/West_Graphical"]
-snap = 1e-06
-polygon = PackedVector2Array(-0.5, -0.05, -0.45, 0, 0.45, 0, 0.5, -0.05)
-mode = 2
-path_node = NodePath("..")
-path_interval_type = 0
-path_interval = 1.0
-path_simplify_angle = 0.0
-path_rotation = 2
-path_local = true
-path_continuous_u = true
-path_u_distance = 1.0
-path_joined = false
+curve = ExtResource("10_ahd2b")
 
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]

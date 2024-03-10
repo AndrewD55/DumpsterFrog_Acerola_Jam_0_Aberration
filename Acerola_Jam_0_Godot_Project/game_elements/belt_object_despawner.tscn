@@ -1,7 +1,8 @@
-[gd_scene load_steps=8 format=3 uid="uid://dsv2is2aywp5w"]
+[gd_scene load_steps=9 format=3 uid="uid://dsv2is2aywp5w"]
 
 [ext_resource type="Script" path="res://game_elements/belt_object_despawner.gd" id="1_aluh4"]
 [ext_resource type="PackedScene" uid="uid://crho7h6t4w6x7" path="res://composition_modules/Linked_Path3D.tscn" id="2_pfhlt"]
+[ext_resource type="PackedScene" uid="uid://bjlnaliaoxaam" path="res://composition_modules/Conveyor_Linked_Path3D.tscn" id="3_jeogr"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_gurqk"]
 size = Vector3(1, 2, 1)
@@ -47,18 +48,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 curve = SubResource("Curve3D_807b7")
 ExitPathNode = NodePath("../Death_Path")
 
-[node name="CSGPolygon3D_BeltShape" type="CSGPolygon3D" parent="Despawn_Shute"]
-snap = 1e-06
-polygon = PackedVector2Array(-0.5, -0.05, -0.45, 0, 0.45, 0, 0.5, -0.05)
-mode = 2
-path_node = NodePath("..")
-path_interval_type = 0
-path_interval = 0.1
-path_simplify_angle = 0.0
-path_rotation = 2
-path_local = true
-path_continuous_u = true
-path_u_distance = 1.0
-path_joined = false
+[node name="Graphical_Conveyor_LinkedPath3D" parent="." instance=ExtResource("3_jeogr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+curve = SubResource("Curve3D_807b7")
 
 [connection signal="child_entered_tree" from="Death_Path" to="." method="_on_death_path_child_entered_tree"]

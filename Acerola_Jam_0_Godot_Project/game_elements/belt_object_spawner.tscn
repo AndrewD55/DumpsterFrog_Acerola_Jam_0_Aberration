@@ -1,7 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://cwl267b67uw75"]
+[gd_scene load_steps=9 format=3 uid="uid://cwl267b67uw75"]
 
 [ext_resource type="Script" path="res://game_elements/belt_object_spawner.gd" id="1_0jjlj"]
 [ext_resource type="PackedScene" uid="uid://crho7h6t4w6x7" path="res://composition_modules/Linked_Path3D.tscn" id="2_uffvu"]
+[ext_resource type="PackedScene" uid="uid://bjlnaliaoxaam" path="res://composition_modules/Conveyor_Linked_Path3D.tscn" id="3_siwt2"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_gurqk"]
 size = Vector3(1, 2, 1)
@@ -15,6 +16,13 @@ albedo_color = Color(0.192157, 0.337255, 0.192157, 1)
 [sub_resource type="Curve3D" id="Curve3D_807b7"]
 _data = {
 "points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, -0.28, 0, 0, 0, 0, 0, 0, 0, 0, 1),
+"tilts": PackedFloat32Array(0, 0)
+}
+point_count = 2
+
+[sub_resource type="Curve3D" id="Curve3D_bp30w"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, -0.25, 0, 0, 0, 0, 0, 0, 0, 0, 1),
 "tilts": PackedFloat32Array(0, 0)
 }
 point_count = 2
@@ -35,20 +43,6 @@ surface_material_override/0 = SubResource("StandardMaterial3D_jgy2a")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 curve = SubResource("Curve3D_807b7")
 
-[node name="Path3D_Graphical" type="Path3D" parent="."]
+[node name="Conveyor_LinkedPath3D_Graphical" parent="." instance=ExtResource("3_siwt2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-curve = SubResource("Curve3D_807b7")
-
-[node name="CSGPolygon3D_BeltShape" type="CSGPolygon3D" parent="Path3D_Graphical"]
-snap = 1e-06
-polygon = PackedVector2Array(-0.5, -0.05, -0.45, 0, 0.45, 0, 0.5, -0.05)
-mode = 2
-path_node = NodePath("..")
-path_interval_type = 0
-path_interval = 1.0
-path_simplify_angle = 0.0
-path_rotation = 1
-path_local = true
-path_continuous_u = true
-path_u_distance = 1.0
-path_joined = false
+curve = SubResource("Curve3D_bp30w")
