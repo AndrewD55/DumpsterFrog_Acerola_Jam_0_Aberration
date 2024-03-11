@@ -9,6 +9,7 @@ extends Control
 @onready var ScoreLabel = $Score_Label
 @onready var WinLabel = $Win_Label
 @onready var Audio_Droning = $AudioStreamPlayer_Droning
+@onready var Character_Dialog_Pane = $Character_Dialog_Pane
 
 var product_count:int = 0
 var current_score:int = 0
@@ -66,6 +67,7 @@ func _physics_process(delta):
 	match game_state:
 		0:
 			if time > 0.2:
+				Character_Dialog_Pane.display_text_sequential("blah blah blah blah blah")
 				game_state = 1
 		1:
 			print("WAVE1")
