@@ -23,20 +23,13 @@ func _physics_process(delta):
 					Dialog_Text.text += character
 					#play character voice sound?
 
-			
-			
-		
-		
-		
-	
-	
-func display_text_sequential(sequential_text:String):
+
+func display_text_sequential(sequential_text:String, character_delay_seconds:float):
 	sequential_text_flag = true
+	self.clear_text()
+	Character_Delay_Seconds = character_delay_seconds
 	for character in sequential_text:
 		sequential_text_char_array.append(character)
 	
-	
-
-	
-func  clear_text():
+func clear_text():
 	Dialog_Text.text = ""

@@ -1,13 +1,6 @@
 extends Control
 
 #This node should act as the hud and game manager.
-#eventually I could have this handle 
-# main menu -> game HUD 
-# pause menu <-> game HUD
-# GameComplete <- game HUD
-
-@onready var ScoreLabel = $Score_Label
-@onready var WinLabel = $Win_Label
 @onready var Audio_Droning = $AudioStreamPlayer_Droning
 @onready var Character_Dialog_Pane = $Character_Dialog_Pane
 
@@ -17,13 +10,28 @@ var current_score:int = 0
 var game_state:int = 0
 
 
-
-
 #Record of Spawn Sequences Completed.
 var Spawn_Sequences_Completed:Array[StringName] = []
 
+#So.. I guess I'm going to give this dict all the necessary keys.
+# in the future I could use a bunch of .has functions to search for things that don't exist yet.
+var Despawned_Items_Record:Dictionary = {
+	"GoodDepot" :   {"REFINED" : 0 , "DEFECT" : 0 },
+	"Incinerator" : {"REFINED" : 0 , "DEFECT" : 0 }}
+
 #This is intended to specify spawn sequence parameters, and multiple could be defined in a state machine
 #however, the random sequence generation needs to be done in _ready
+
+
+var Sequence_Tutorial:Array[bool] = [false,true]
+var Spawn_Sequence_Tutorial:Dictionary = {
+		"SpawnerID": StringName("SpawnB"),
+		"Spawn_Rate_Seconds_float": float(2.0),
+		"Belt_Obj_Sequence_array": Sequence_Tutorial,
+		"Belt_Obj1_enum": On_Belt_Object.enum_belt_object_type.REFINED,
+		"Belt_Obj2_enum": On_Belt_Object.enum_belt_object_type.DEFECT}
+
+
 var Spawn_Sequence_A_Dict:Dictionary = {
 		"SpawnerID": StringName("SpawnA"),
 		"Spawn_Rate_Seconds_float": float(2.0),
@@ -45,8 +53,7 @@ func _ready():
 	Audio_Droning.play()
 	
 	#Create Score tally functions for the despawner
-	EventBus.create_event("Add_Refined_Score",_Add_Refined_Score.bind())
-	EventBus.create_event("Add_Defect_Score",_Add_Refined_Score.bind())
+	EventBus.create_event("Despawned_Item",_Despawned_Item.bind())
 	
 	#Record Spawn Sequences that have completed to inform game state changes. 
 	EventBus.create_event("Completed_Scripted_Spawn_Sequence",_Completed_Scripted_Spawn_Sequence.bind())
@@ -56,45 +63,156 @@ func _ready():
 	Spawn_Sequence_A_Dict["Belt_Obj_Sequence_array"] = generate_random_pattern_2_objs(7,3)
 	
 	
-	
-	
+
+
 
 var time:float = 0.0
+
+var state_timer:float = 0.0
+var state_timer_reset:bool = false
+
+#Dialog Timer Counts Down, To eaily facilitate new delays.
+var dialog_timer:float = 0.0
+var dialog_state:int = 0
+var dialog_timer_waiting:bool = false
+
+
 func _physics_process(delta):
+	#Total timer
 	time += delta
+	#State timer  (Reset every state change)
+	state_timer += delta
+	#dialog state timer  (Reset every dialog change)
+	dialog_timer += delta
+	
 	
 	# I don't know if there's a better way to make a long scripted sequence for purely linear games?
 	match game_state:
 		0:
-			if time > 0.2:
-				Character_Dialog_Pane.display_text_sequential("blah blah blah blah blah")
-				game_state = 1
+			#Tutorial Sequence:
+			if state_timer_reset == false:
+				state_timer = 0.0
+				state_timer_reset = true
+				
+				dialog_timer = 0.0
+				dialog_state = 0
+				dialog_timer_waiting = false
+
+			match dialog_state:
+				0: #Sequential State
+					if dialog_timer > 0.1 and dialog_timer_waiting == false:
+						Character_Dialog_Pane.display_text_sequential("Ahh, Hello there, you must be our new employee.",0.05)
+						dialog_timer_waiting = true
+					if dialog_timer > 5.0 and dialog_timer_waiting == true:
+						dialog_timer_waiting = false
+						dialog_timer = 0.0
+						dialog_state += 1
+				1:  #Sequential State
+					if dialog_timer > 0.1 and dialog_timer_waiting == false:
+						Character_Dialog_Pane.display_text_sequential("Your job is to sort out good donuts from bad donuts",0.05)
+						dialog_timer_waiting = true
+					if dialog_timer > 5.0 and dialog_timer_waiting == true:
+						dialog_timer_waiting = false
+						dialog_timer = 0.0
+						dialog_state += 1
+				2:  #Sequential State
+					if dialog_timer > 0.1 and dialog_timer_waiting == false:
+						Character_Dialog_Pane.display_text_sequential("To rotate the yellow belt use R+Click to rotate the belt Clockwise and L+Click to rotate the belt CounterClockwise",0.05)
+						dialog_timer_waiting = true
+					if dialog_timer > 8.0 and dialog_timer_waiting == true:
+						dialog_timer_waiting = false
+						dialog_timer = 0.0
+						dialog_state += 1
+				3:  #Sequential State
+					if dialog_timer > 0.1 and dialog_timer_waiting == false:
+						Character_Dialog_Pane.display_text_sequential("Here, I'll ask the cooks to send you one good donut and one bad moldy donut as an example,",0.05)
+						EventBus.trigger_event("Start_Scripted_Spawn_Sequence", Spawn_Sequence_Tutorial)
+						dialog_timer_waiting = true
+					if (Despawned_Items_Record["GoodDepot"]["REFINED"] == 1) and (Despawned_Items_Record["Incinerator"]["DEFECT"] == 1) and (dialog_timer_waiting == true) and ("SpawnB" in Spawn_Sequences_Completed):
+						self.reset_despawned_items_counts()
+						Spawn_Sequences_Completed = []
+						dialog_timer_waiting = false
+						dialog_timer = 0.0
+						dialog_state = 5
+					elif (Despawned_Items_Record["GoodDepot"]["DEFECT"] > 0) or (Despawned_Items_Record["Incinerator"]["REFINED"] > 0) and self.total_despawned_items() == 2  and (dialog_timer_waiting == true) and ("SpawnB" in Spawn_Sequences_Completed):
+						self.reset_despawned_items_counts()
+						Spawn_Sequences_Completed = []
+						dialog_timer_waiting = false
+						dialog_timer = 0.0
+						dialog_state = 4
+					
+				4:  #Tutorial Fail State
+					if dialog_timer > 0.1 and dialog_timer_waiting == false:
+						Character_Dialog_Pane.display_text_sequential("Uhh, let's try that again... put the moldy donut in the incinerator and the good donut in the packaging area,",0.05)
+						##Reload the Sequence Array, as it is popped during a spawn sequence
+						#Spawn_Sequence_Tutorial["Belt_Obj_Sequence_array"] = Sequence_Tutorial
+						EventBus.trigger_event("Start_Scripted_Spawn_Sequence", Spawn_Sequence_Tutorial)
+						dialog_timer_waiting = true
+					if (Despawned_Items_Record["GoodDepot"]["REFINED"] == 1) and (Despawned_Items_Record["Incinerator"]["DEFECT"] == 1) and (dialog_timer_waiting == true) and ("SpawnB" in Spawn_Sequences_Completed):
+						self.reset_despawned_items_counts()
+						Spawn_Sequences_Completed = []
+						dialog_timer_waiting = false
+						dialog_timer = 0.0
+						dialog_state = 5
+					elif (Despawned_Items_Record["GoodDepot"]["DEFECT"] > 0) or (Despawned_Items_Record["Incinerator"]["REFINED"] > 0) and self.total_despawned_items() == 2  and (dialog_timer_waiting == true) and ("SpawnB" in Spawn_Sequences_Completed):
+						self.reset_despawned_items_counts()
+						Spawn_Sequences_Completed = []
+						dialog_timer_waiting = false
+						dialog_timer = 0.0
+						dialog_state = 4
+						
+				5:  #Tutorial Succeed State
+					if dialog_timer > 0.1 and dialog_timer_waiting == false:
+						Character_Dialog_Pane.display_text_sequential("Good work!",0.05)
+						dialog_timer_waiting = true
+					if dialog_timer > 3.0 and dialog_timer_waiting == true:
+						dialog_timer_waiting = false
+						state_timer_reset = false
+						game_state = 1
+						
 		1:
-			print("WAVE1")
-			EventBus.trigger_event("Start_Scripted_Spawn_Sequence", Spawn_Sequence_A_Dict)
-			game_state = 2
-		2: 
-			if "SpawnA" in Spawn_Sequences_Completed:
-				Spawn_Sequences_Completed = []
-				time = 0.0
-				game_state = 3
-		3:
-			if time > 10.0:
-				print("WAVE2")
-				Spawn_Sequence_A_WAVE2_Dict["Belt_Obj_Sequence_array"] = generate_random_pattern_2_objs(15,7)
-				EventBus.trigger_event("Start_Scripted_Spawn_Sequence", Spawn_Sequence_A_WAVE2_Dict)
-				game_state = 4
-		4:
-			if "SpawnA" in Spawn_Sequences_Completed:
-				Spawn_Sequences_Completed = []
-				print("ALL WAVES COMPLETED")
-				game_state = 5
 			
+			pass
+	
+			
+			
+			
+			
+			
+			
+			#print("WAVE1")
+			#EventBus.trigger_event("Start_Scripted_Spawn_Sequence", Spawn_Sequence_A_Dict)
+			#game_state = 2
+		#2: 
+			#if "SpawnA" in Spawn_Sequences_Completed:
+				#Spawn_Sequences_Completed = []
+				#time = 0.0
+				#game_state = 3
+		#3:
+			#if time > 10.0:
+				#print("WAVE2")
+				#Spawn_Sequence_A_WAVE2_Dict["Belt_Obj_Sequence_array"] = generate_random_pattern_2_objs(15,7)
+				#EventBus.trigger_event("Start_Scripted_Spawn_Sequence", Spawn_Sequence_A_WAVE2_Dict)
+				#game_state = 4
+		#4:
+			#if "SpawnA" in Spawn_Sequences_Completed:
+				#Spawn_Sequences_Completed = []
+				#print("ALL WAVES COMPLETED")
+				#game_state = 5
 
 
+#helper functions for the despawned_items_record, as it's not as managable line by line.
+#this goes heavily against modularity and future expansion.. but it's a game jam and I'm running out of time
+func total_despawned_items()->int:
+	return (Despawned_Items_Record["GoodDepot"]["REFINED"] + Despawned_Items_Record["GoodDepot"]["DEFECT"] + Despawned_Items_Record["Incinerator"]["REFINED"] + Despawned_Items_Record["Incinerator"]["DEFECT"])
 
-
-
+func reset_despawned_items_counts()->void:
+	Despawned_Items_Record["GoodDepot"]["REFINED"] = 0
+	Despawned_Items_Record["GoodDepot"]["DEFECT"] = 0
+	Despawned_Items_Record["Incinerator"]["REFINED"] = 0
+	Despawned_Items_Record["Incinerator"]["DEFECT"] = 0
+	
+	
 
 func generate_random_pattern_2_objs(common_quantity:int, rare_quantity:int):
 	#generates a random array sequence of 0s and 1s,
@@ -116,19 +234,6 @@ func generate_random_pattern_2_objs(common_quantity:int, rare_quantity:int):
 	if rare_quantity == 0:
 		return obj_queue
 	
-func check_game_end():
-	if product_count > 19:
-		ScoreLabel.text = ("Score: %5d/170" % current_score)
-		if current_score < 30:
-			WinLabel.text = "You're Fired. Don't come back to Work"
-		elif current_score > 30 and current_score < 150:
-			WinLabel.text = "Good Job! That's a Decent Score"
-		elif current_score > 150:
-			WinLabel.text = "Congratulations! You've Beaten the Game!"
-
-func update_score():
-	ScoreLabel.text = ("Score: %5d" % current_score)
-
 
 
 #events from spawner to return it's complete state
@@ -137,14 +242,11 @@ func _Completed_Scripted_Spawn_Sequence(Completed_Spawner_Name:StringName):
 
 
 #reminder:these are events from the Despawner; I need to manage them here next.
-func _Add_Refined_Score(score:int):
-	current_score += score
-	product_count += 1
-	self.update_score()
-	self.check_game_end()
+func _Despawned_Item(Despawn_Dict:Dictionary):
+	if not Despawned_Items_Record.has(Despawn_Dict["DespawnerID"]):
+		Despawned_Items_Record[Despawn_Dict["DespawnerID"]] = Dictionary()
+	if not Despawned_Items_Record[Despawn_Dict["DespawnerID"]].has(Despawn_Dict["Belt_Object_Type"]):
+		Despawned_Items_Record[Despawn_Dict["DespawnerID"]][Despawn_Dict["Belt_Object_Type"]] = int(0)
+	Despawned_Items_Record[Despawn_Dict["DespawnerID"]][Despawn_Dict["Belt_Object_Type"]] += 1
+	
 
-func _Add_Defect_Score(score:int):
-	current_score += score
-	product_count += 1
-	self.update_score()
-	self.check_game_end()

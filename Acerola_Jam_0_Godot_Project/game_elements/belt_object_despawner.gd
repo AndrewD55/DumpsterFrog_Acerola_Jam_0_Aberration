@@ -5,9 +5,7 @@ class_name Belt_Object_Despawner
 
 #On_Belt_Object.enum_belt_object_type {REFINED, DEFECT}
 
-#
-@export var Object_Type_REFINED_Score:int=0
-@export var Object_Type_DEFECT_Score:int=0
+@export var DespawnerID:StringName="undef"
 
 
 @onready var Despawn_Shute = $Despawn_Shute
@@ -17,8 +15,17 @@ func get_despawner_entrance()->Path3D: #other linked paths will call this. #retu
 	return Despawn_Shute
 	
 func _on_death_path_child_entered_tree(node):
-		if node.initial_object_type == On_Belt_Object.enum_belt_object_type.REFINED:
-			EventBus.trigger_event("Add_Refined_Score", Object_Type_REFINED_Score)
-		elif node.initial_object_type == On_Belt_Object.enum_belt_object_type.DEFECT:
-			EventBus.trigger_event("Add_Defect_Score", Object_Type_DEFECT_Score)
+		var obj_type_name:StringName
+		
+		match node.initial_object_type:
+			On_Belt_Object.enum_belt_object_type.REFINED:
+				obj_type_name = "REFINED"
+			On_Belt_Object.enum_belt_object_type.DEFECT:
+				obj_type_name = "DEFECT"
+				
+		var despawn_dict:Dictionary = {
+			"DespawnerID":DespawnerID,
+			"Belt_Object_Type":obj_type_name} 
+		
+		EventBus.trigger_event("Despawned_Item", despawn_dict)
 		node.queue_free()

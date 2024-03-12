@@ -17,6 +17,7 @@ var initialize_spawn_sequence:bool=false
 var spawn_sequence_active:bool=false
 var spawn_rate_seconds:float=0.0
 var belt_obj_sequence:Array[bool]= []
+var belt_obj_sequence_index:int =0 
 var belt_object1_type:On_Belt_Object.enum_belt_object_type = On_Belt_Object.enum_belt_object_type.REFINED
 var belt_object2_type:On_Belt_Object.enum_belt_object_type = On_Belt_Object.enum_belt_object_type.REFINED
 
@@ -34,12 +35,13 @@ func _physics_process(delta):
 		initialize_spawn_sequence = false
 		spawn_sequence_active = true
 
-	if belt_obj_sequence.size() > 0:
+	if belt_obj_sequence_index > 0:
 		if time > spawn_rate_seconds:
 			if spawn_shute_vacant == true:
 				var New_On_Belt_Obj = On_Belt_Objects.instantiate()
 				
-				match belt_obj_sequence.pop_back():
+				belt_obj_sequence_index -= 1
+				match belt_obj_sequence[belt_obj_sequence_index]:
 					true: #Common Object Type 
 						New_On_Belt_Obj.initial_object_type = belt_object1_type
 					false: #Rarer Object Type
@@ -56,6 +58,7 @@ func _physics_process(delta):
 			EventBus.trigger_event("Completed_Scripted_Spawn_Sequence", SpawnerID)
 			initialize_spawn_sequence=false
 			spawn_sequence_active=false
+			belt_obj_sequence_index = 0
 			belt_obj_sequence=[]
 
 
@@ -69,6 +72,7 @@ func _start_spawn_sequence(Spawn_Sequence_Dict:Dictionary):
 		initialize_spawn_sequence = true
 		spawn_rate_seconds = Spawn_Sequence_Dict["Spawn_Rate_Seconds_float"]
 		belt_obj_sequence = Spawn_Sequence_Dict["Belt_Obj_Sequence_array"]
+		belt_obj_sequence_index = belt_obj_sequence.size()
 		belt_object1_type = Spawn_Sequence_Dict["Belt_Obj1_enum"]
 		belt_object2_type = Spawn_Sequence_Dict["Belt_Obj2_enum"]
 		#print("SpawnerID matches! Begin Spawn!")
