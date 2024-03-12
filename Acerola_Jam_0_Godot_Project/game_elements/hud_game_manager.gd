@@ -228,7 +228,7 @@ func _physics_process(delta):
 
 
 			match dialog_state:
-				0: #Sequential State
+				0: #GAME WAVE1 State
 					if dialog_timer > 0.1 and dialog_timer_waiting == false:
 						Character_Dialog_Pane.display_text_sequential("I'll have you work on sorting this normal batch of donuts",0.05)
 						Spawn_Sequence_A_WAVE1["Belt_Obj_Sequence_array"] = generate_random_pattern_2_objs(21,3)
@@ -268,31 +268,106 @@ func _physics_process(delta):
 								Character_Dialog_Pane.display_text_sequential("You burned so many.. The flames.. I think.. we should burn more",0.05)
 							enum_player_path.PERFECT:
 								Character_Dialog_Pane.display_text_sequential("That was Perfect! Good Job!",0.05)
+						dialog_timer_waiting = true
 						
+					if dialog_timer > 8.0 and dialog_timer_waiting == true:
+						dialog_timer_waiting = false
+						state_timer_reset = false
+						game_state = 2
+				
+	
+		2: #Game Wave 2 (30 total, 24 bad donuts, 6 good donuts)
+			# Continue BURN path by burning more donuts. Sequential text up to 15,30, 50 
+			# Continue/Start NORMAL path by missing any number of donuts.
+			# Continue PERFECT path by sorting all donuts perfectly.
+			#Spawn_Sequence_A_WAVE2
+			#Spawn_Sequence_B_WAVE2
+			var burn_dialog = 0 #(something special so we can have multiple burn dialogs.)
+			if state_timer_reset == false:
+				state_timer = 0.0
+				state_timer_reset = true
+				
+				dialog_timer = 0.0
+				dialog_state = 0
+				dialog_timer_waiting = false
+				 
+			
+			match dialog_state:
+				0: #Sequential State
+					if dialog_timer > 0.1 and dialog_timer_waiting == false:
+						Character_Dialog_Pane.display_text_sequential("It sounds like something's wrong in the kitchen.. This next batch is most likely botched",0.05)
 						dialog_timer_waiting = true
 					if dialog_timer > 8.0 and dialog_timer_waiting == true:
 						dialog_timer_waiting = false
 						dialog_timer = 0.0
 						dialog_state += 1
-				
-	
-		2: #Game Wave 2 (36 total, 20 bad donuts, 16 good donuts)
-			# Continue BURN path by burning more than 26 normal donuts. 
-			# Continue/Start NORMAL path by missing any number of donuts.
-			# Continue PERFECT path by sorting all donuts perfectly.
-			#Spawn_Sequence_A_WAVE2
-			#Spawn_Sequence_B_WAVE2
-			pass
-			
-			
+						
+				1: #GAME WAVE2 State
+					if dialog_timer > 0.1 and dialog_timer_waiting == false:
+						Character_Dialog_Pane.display_text_sequential("Oh, These are Awful, try to pick out the good ones",0.05)
+						Spawn_Sequence_A_WAVE2["Belt_Obj_Sequence_array"] = generate_random_pattern_2_objs(24,6)
+						EventBus.trigger_event("Start_Scripted_Spawn_Sequence", Spawn_Sequence_A_WAVE2)
+						Spawn_Sequence_B_WAVE2["Belt_Obj_Sequence_array"] = generate_random_pattern_2_objs(24,6)
+						EventBus.trigger_event("Start_Scripted_Spawn_Sequence", Spawn_Sequence_B_WAVE2)
+						dialog_timer_waiting = true
+						
+					#if player has made a mistake, they are put on the "Normal path" and a short dialog plays
+					if (player_path == enum_player_path.PERFECT) and ((Despawned_Items_Record["GoodDepot"]["DEFECT"] > 0) or (Despawned_Items_Record["Incinerator"]["REFINED"] > 0)) and (dialog_timer_waiting == true):
+						Character_Dialog_Pane.display_text_sequential("Oops, Looks like you missed one",0.05)
+						player_path = enum_player_path.NORMAL
+						
+					#if player has been burning too many donuts, they stay on the "Burn path" and a short dialog plays
+					if (player_path == enum_player_path.BURN) and (burn_dialog == 0) and (Despawned_Items_Record["Incinerator"]["REFINED"]+Despawned_Items_Record["Incinerator"]["DEFECT"] > 15) and (dialog_timer_waiting == true):
+						Character_Dialog_Pane.display_text_sequential("ahh, good, good! the flames! the flames rise!",0.05)
+						burn_dialog = 1
+					elif (player_path == enum_player_path.BURN) and (burn_dialog == 1) and (Despawned_Items_Record["Incinerator"]["REFINED"]+Despawned_Items_Record["Incinerator"]["DEFECT"] > 30) and (dialog_timer_waiting == true):
+						Character_Dialog_Pane.display_text_sequential("HaHaHaHa!, YES! KEEP BURNING!",0.05)
+						burn_dialog = 2
+					elif (player_path == enum_player_path.BURN) and (burn_dialog == 2) and (Despawned_Items_Record["Incinerator"]["REFINED"]+Despawned_Items_Record["Incinerator"]["DEFECT"] > 50) and (dialog_timer_waiting == true):
+						Character_Dialog_Pane.display_text_sequential("HaHaHaHa!, YES! KEEP BURNING!",0.05)
+						burn_dialog = 3
+						
+					if (self.total_despawned_items() == 60) and (dialog_timer_waiting == true) and ("SpawnB" in Spawn_Sequences_Completed) and ("SpawnA" in Spawn_Sequences_Completed):
+						
+						#if neither Normal or Burn conditions and you're here, you must be perfect!
+						#no need for any new conditionals, they are either still perfect or dropped grades
+						self.reset_despawned_items_counts()
+						Spawn_Sequences_Completed = []
+						dialog_timer_waiting = false
+						dialog_timer = 0.0
+						dialog_state += 1
+						
+				2: #Sequential State
+					if dialog_timer > 0.1 and dialog_timer_waiting == false:
+						match player_path:
+							enum_player_path.UNDEF:
+								Character_Dialog_Pane.display_text_sequential("THIS IS AN ERROR enum_player_path.UNDEF ",0.05)
+							enum_player_path.NORMAL:
+								Character_Dialog_Pane.display_text_sequential("Wow, that was a tough one, I've never seen that many bad donuts,",0.05)
+							enum_player_path.BURN:
+								Character_Dialog_Pane.display_text_sequential("Great. Work. Acolyte. The. Lord. of. Flames. Will. Be. Pleased.",0.05)
+							enum_player_path.PERFECT:
+								Character_Dialog_Pane.display_text_sequential("Excellent! that was the worst batch I've ever seen and you handled it like a pro!",0.05)
+						dialog_timer_waiting = true
+					if dialog_timer > 8.0 and dialog_timer_waiting == true:
+						dialog_timer_waiting = false
+						state_timer_reset = false
+						game_state = 3
+						
 		3: #Game Wave 3 (36 total, 20 cats, 16 dogs)
 			#	FAIL BURN path by sparing EVEN A SINGLE ANIMAL
 			#  Continue Normal path 
 			#	FAIL PERFECT path by BURINING EVEN A SINGLE ANIMAL
 			#Spawn_Sequence_A_WAVE3
 			#Spawn_Sequence_B_WAVE3
-			pass
-			
+			if state_timer_reset == false:
+				state_timer = 0.0
+				state_timer_reset = true
+				
+				dialog_timer = 0.0
+				dialog_state = 0
+				dialog_timer_waiting = false
+				
 			
 
 
