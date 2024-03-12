@@ -26,26 +26,68 @@ var Despawned_Items_Record:Dictionary = {
 var Sequence_Tutorial:Array[bool] = [false,true]
 var Spawn_Sequence_Tutorial:Dictionary = {
 		"SpawnerID": StringName("SpawnB"),
-		"Spawn_Rate_Seconds_float": float(2.0),
+		"Spawn_Rate_Seconds_float": float(2.5),
 		"Belt_Obj_Sequence_array": Sequence_Tutorial,
 		"Belt_Obj1_enum": On_Belt_Object.enum_belt_object_type.REFINED,
 		"Belt_Obj2_enum": On_Belt_Object.enum_belt_object_type.DEFECT}
 
 
-var Spawn_Sequence_A_Dict:Dictionary = {
+ #Game Wave 1 ((24 total)  21 normal donuts, 3 bad donuts) 
+			# Start BURN path by burning more than 10 normal donuts. 
+			# Start NORMAL path by missing any number of donuts.
+			# Start PERFECT path by sorting all donuts perfectly.
+var Spawn_Sequence_A_WAVE1:Dictionary = {
 		"SpawnerID": StringName("SpawnA"),
-		"Spawn_Rate_Seconds_float": float(2.0),
+		"Spawn_Rate_Seconds_float": float(2.5),
 		"Belt_Obj_Sequence_array": [],
 		"Belt_Obj1_enum": On_Belt_Object.enum_belt_object_type.REFINED,
 		"Belt_Obj2_enum": On_Belt_Object.enum_belt_object_type.DEFECT}
 		
-		
-var Spawn_Sequence_A_WAVE2_Dict:Dictionary = {
+var Spawn_Sequence_B_WAVE1:Dictionary = {
+		"SpawnerID": StringName("SpawnB"),
+		"Spawn_Rate_Seconds_float": float(2.5),
+		"Belt_Obj_Sequence_array": [],
+		"Belt_Obj1_enum": On_Belt_Object.enum_belt_object_type.REFINED,
+		"Belt_Obj2_enum": On_Belt_Object.enum_belt_object_type.DEFECT}
+
+
+ #Game Wave 2 (36 total, 20 bad donuts, 16 good donuts)
+			# Continue BURN path by burning more than 26 normal donuts. 
+			# Continue/Start NORMAL path by missing any number of donuts.
+			# Continue PERFECT path by sorting all donuts perfectly.
+var Spawn_Sequence_A_WAVE2:Dictionary = {
 		"SpawnerID": StringName("SpawnA"),
-		"Spawn_Rate_Seconds_float": float(2.0),
+		"Spawn_Rate_Seconds_float": float(1.8),
 		"Belt_Obj_Sequence_array": [],
 		"Belt_Obj1_enum": On_Belt_Object.enum_belt_object_type.DEFECT,
 		"Belt_Obj2_enum": On_Belt_Object.enum_belt_object_type.REFINED}
+		
+var Spawn_Sequence_B_WAVE2:Dictionary = {
+		"SpawnerID": StringName("SpawnB"),
+		"Spawn_Rate_Seconds_float": float(1.8),
+		"Belt_Obj_Sequence_array": [],
+		"Belt_Obj1_enum": On_Belt_Object.enum_belt_object_type.DEFECT,
+		"Belt_Obj2_enum": On_Belt_Object.enum_belt_object_type.REFINED}
+
+
+ #Game Wave 3 (36 total, 20 cats, 16 dogs)
+			#	FAIL BURN path by sparing EVEN A SINGLE ANIMAL
+			#  Continue Normal path 
+			#	FAIL PERFECT path by BURINING EVEN A SINGLE ANIMAL
+var Spawn_Sequence_A_WAVE3:Dictionary = {
+		"SpawnerID": StringName("SpawnA"),
+		"Spawn_Rate_Seconds_float": float(1.5),
+		"Belt_Obj_Sequence_array": [],
+		"Belt_Obj1_enum": On_Belt_Object.enum_belt_object_type.REFINED,
+		"Belt_Obj2_enum": On_Belt_Object.enum_belt_object_type.DEFECT}
+		
+var Spawn_Sequence_B_WAVE3:Dictionary = {
+		"SpawnerID": StringName("SpawnB"),
+		"Spawn_Rate_Seconds_float": float(1.5),
+		"Belt_Obj_Sequence_array": [],
+		"Belt_Obj1_enum": On_Belt_Object.enum_belt_object_type.REFINED,
+		"Belt_Obj2_enum": On_Belt_Object.enum_belt_object_type.DEFECT}
+
 
 
 func _ready():	
@@ -58,12 +100,12 @@ func _ready():
 	#Record Spawn Sequences that have completed to inform game state changes. 
 	EventBus.create_event("Completed_Scripted_Spawn_Sequence",_Completed_Scripted_Spawn_Sequence.bind())
 	
-	
-	#generate random sequence for Spawn_Sequence_A_Dict
-	Spawn_Sequence_A_Dict["Belt_Obj_Sequence_array"] = generate_random_pattern_2_objs(7,3)
-	
-	
 
+# player_path=3 perfect run
+# player_path=2 nomral run
+# player_path=1 burn run
+enum enum_player_path {UNDEF, BURN, NORMAL, PERFECT}
+var player_path:enum_player_path = enum_player_path.UNDEF
 
 
 var time:float = 0.0
@@ -88,8 +130,8 @@ func _physics_process(delta):
 	
 	# I don't know if there's a better way to make a long scripted sequence for purely linear games?
 	match game_state:
-		0:
-			#Tutorial Sequence:
+		0: #Game Tutorial Sequence
+			
 			if state_timer_reset == false:
 				state_timer = 0.0
 				state_timer_reset = true
@@ -163,42 +205,95 @@ func _physics_process(delta):
 						
 				5:  #Tutorial Succeed State
 					if dialog_timer > 0.1 and dialog_timer_waiting == false:
-						Character_Dialog_Pane.display_text_sequential("Good work!",0.05)
+						Character_Dialog_Pane.display_text_sequential("Good work! Now you know the ropes,",0.05)
 						dialog_timer_waiting = true
 					if dialog_timer > 3.0 and dialog_timer_waiting == true:
 						dialog_timer_waiting = false
 						state_timer_reset = false
 						game_state = 1
 						
-		1:
-			
-			pass
+						
+						
+		1: #Game Wave 1 ((24 total)  21 normal donuts, 3 bad donuts) 
+			# Start BURN path by burning more than 15 normal donuts. 
+			# Start NORMAL path by missing any number of donuts.
+			# Start PERFECT path by sorting all donuts perfectly.
+			if state_timer_reset == false:
+				state_timer = 0.0
+				state_timer_reset = true
+				
+				dialog_timer = 0.0
+				dialog_state = 0
+				dialog_timer_waiting = false
+
+
+			match dialog_state:
+				0: #Sequential State
+					if dialog_timer > 0.1 and dialog_timer_waiting == false:
+						Character_Dialog_Pane.display_text_sequential("I'll have you work on sorting this normal batch of donuts",0.05)
+						Spawn_Sequence_A_WAVE1["Belt_Obj_Sequence_array"] = generate_random_pattern_2_objs(21,3)
+						EventBus.trigger_event("Start_Scripted_Spawn_Sequence", Spawn_Sequence_A_WAVE1)
+						Spawn_Sequence_B_WAVE1["Belt_Obj_Sequence_array"] = generate_random_pattern_2_objs(21,3)
+						EventBus.trigger_event("Start_Scripted_Spawn_Sequence", Spawn_Sequence_B_WAVE1)
+						dialog_timer_waiting = true
+						
+					#if player has made a mistake, they are put on the "Normal path" and a short dialog plays
+					if (player_path == enum_player_path.UNDEF) and ((Despawned_Items_Record["GoodDepot"]["DEFECT"] > 0) or (Despawned_Items_Record["Incinerator"]["REFINED"] > 0)) and (dialog_timer_waiting == true):
+						Character_Dialog_Pane.display_text_sequential("Oops, Looks like you missed one",0.05)
+						player_path = enum_player_path.NORMAL
+						
+					#if player has been burning too many donuts, they are put on the "Burn path" and a short dialog plays
+					if (player_path == enum_player_path.UNDEF or player_path == enum_player_path.NORMAL) and (Despawned_Items_Record["Incinerator"]["REFINED"] > 15) and (dialog_timer_waiting == true):
+						Character_Dialog_Pane.display_text_sequential("You.. You're burning everything..",0.05)
+						player_path = enum_player_path.BURN
+						
+					if (self.total_despawned_items() == 48) and (dialog_timer_waiting == true) and ("SpawnB" in Spawn_Sequences_Completed) and ("SpawnA" in Spawn_Sequences_Completed):
+						#if neither Normal or Burn conditions and you're here, you must be perfect!
+						if player_path == enum_player_path.UNDEF:
+							player_path = enum_player_path.PERFECT
+						self.reset_despawned_items_counts()
+						Spawn_Sequences_Completed = []
+						dialog_timer_waiting = false
+						dialog_timer = 0.0
+						dialog_state += 1
+						
+				1: #Sequential State
+					if dialog_timer > 0.1 and dialog_timer_waiting == false:
+						match player_path:
+							enum_player_path.UNDEF:
+								Character_Dialog_Pane.display_text_sequential("THIS IS AN ERROR enum_player_path.UNDEF ",0.05)
+							enum_player_path.NORMAL:
+								Character_Dialog_Pane.display_text_sequential("You did Good, I think you're getting the hang of it",0.05)
+							enum_player_path.BURN:
+								Character_Dialog_Pane.display_text_sequential("You burned so many.. The flames.. I think.. we should burn more",0.05)
+							enum_player_path.PERFECT:
+								Character_Dialog_Pane.display_text_sequential("That was Perfect! Good Job!",0.05)
+						
+						dialog_timer_waiting = true
+					if dialog_timer > 8.0 and dialog_timer_waiting == true:
+						dialog_timer_waiting = false
+						dialog_timer = 0.0
+						dialog_state += 1
+				
 	
+		2: #Game Wave 2 (36 total, 20 bad donuts, 16 good donuts)
+			# Continue BURN path by burning more than 26 normal donuts. 
+			# Continue/Start NORMAL path by missing any number of donuts.
+			# Continue PERFECT path by sorting all donuts perfectly.
+			#Spawn_Sequence_A_WAVE2
+			#Spawn_Sequence_B_WAVE2
+			pass
 			
 			
+		3: #Game Wave 3 (36 total, 20 cats, 16 dogs)
+			#	FAIL BURN path by sparing EVEN A SINGLE ANIMAL
+			#  Continue Normal path 
+			#	FAIL PERFECT path by BURINING EVEN A SINGLE ANIMAL
+			#Spawn_Sequence_A_WAVE3
+			#Spawn_Sequence_B_WAVE3
+			pass
 			
 			
-			
-			
-			#print("WAVE1")
-			#EventBus.trigger_event("Start_Scripted_Spawn_Sequence", Spawn_Sequence_A_Dict)
-			#game_state = 2
-		#2: 
-			#if "SpawnA" in Spawn_Sequences_Completed:
-				#Spawn_Sequences_Completed = []
-				#time = 0.0
-				#game_state = 3
-		#3:
-			#if time > 10.0:
-				#print("WAVE2")
-				#Spawn_Sequence_A_WAVE2_Dict["Belt_Obj_Sequence_array"] = generate_random_pattern_2_objs(15,7)
-				#EventBus.trigger_event("Start_Scripted_Spawn_Sequence", Spawn_Sequence_A_WAVE2_Dict)
-				#game_state = 4
-		#4:
-			#if "SpawnA" in Spawn_Sequences_Completed:
-				#Spawn_Sequences_Completed = []
-				#print("ALL WAVES COMPLETED")
-				#game_state = 5
 
 
 #helper functions for the despawned_items_record, as it's not as managable line by line.
