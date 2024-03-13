@@ -4,7 +4,7 @@ class_name On_Belt_Object
 @onready var FrontBumper = $Area3D/Front_Bumper
 @onready var BackBumper = $Area3D/Back_Bumper
 
-enum enum_belt_object_type {REFINED, DEFECT}
+enum enum_belt_object_type {REFINED, DEFECT, DEMON, HOLY}
 
 var Good_Product = preload("res://3D_Media/Good_Product/Good_Donut_V0.glb").instantiate()
 var Bad_Product = preload("res://3D_Media/Bad_Product/Bad_Donut_V0.glb").instantiate()
@@ -36,6 +36,10 @@ func _ready():
 			self.add_child(Good_Product)
 		enum_belt_object_type.DEFECT:
 			self.add_child(Bad_Product)
+		enum_belt_object_type.DEMON:    ##UPDATE THESE TO NEW MODELS ONCE LOGIC IS SOUND
+			self.add_child(Bad_Product)
+		enum_belt_object_type.HOLY:
+			self.add_child(Good_Product)
 
 
 func _physics_process(delta):

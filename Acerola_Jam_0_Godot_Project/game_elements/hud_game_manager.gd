@@ -4,10 +4,6 @@ extends Control
 @onready var Audio_Droning = $AudioStreamPlayer_Droning
 @onready var Character_Dialog_Pane = $Character_Dialog_Pane
 
-var product_count:int = 0
-var current_score:int = 0
-
-var game_state:int = 0
 
 
 #Record of Spawn Sequences Completed.
@@ -16,8 +12,8 @@ var Spawn_Sequences_Completed:Array[StringName] = []
 #So.. I guess I'm going to give this dict all the necessary keys.
 # in the future I could use a bunch of .has functions to search for things that don't exist yet.
 var Despawned_Items_Record:Dictionary = {
-	"GoodDepot" :   {"REFINED" : 0 , "DEFECT" : 0 },
-	"Incinerator" : {"REFINED" : 0 , "DEFECT" : 0 }}
+	"GoodDepot" :   {"REFINED" : 0 , "DEFECT" : 0, "DEMON" : 0, "HOLY" : 0},
+	"Incinerator" : {"REFINED" : 0 , "DEFECT" : 0, "DEMON" : 0, "HOLY" : 0 }}
 
 #This is intended to specify spawn sequence parameters, and multiple could be defined in a state machine
 #however, the random sequence generation needs to be done in _ready
@@ -51,7 +47,7 @@ var Spawn_Sequence_B_WAVE1:Dictionary = {
 		"Belt_Obj2_enum": On_Belt_Object.enum_belt_object_type.DEFECT}
 
 
- #Game Wave 2 (36 total, 20 bad donuts, 16 good donuts)
+ #Game Wave 2 (30 total, 24 bad donuts, 6 good donuts)
 			# Continue BURN path by burning more than 26 normal donuts. 
 			# Continue/Start NORMAL path by missing any number of donuts.
 			# Continue PERFECT path by sorting all donuts perfectly.
@@ -70,23 +66,23 @@ var Spawn_Sequence_B_WAVE2:Dictionary = {
 		"Belt_Obj2_enum": On_Belt_Object.enum_belt_object_type.REFINED}
 
 
- #Game Wave 3 (36 total, 20 cats, 16 dogs)
-			#	FAIL BURN path by sparing EVEN A SINGLE ANIMAL
-			#  Continue Normal path 
-			#	FAIL PERFECT path by BURINING EVEN A SINGLE ANIMAL
+ #Game Wave 3 (30 total, 20 demons, 10 holy donuts)
+			#  Burn Path eitehr
+			#  Continue Normal Path
+			#
 var Spawn_Sequence_A_WAVE3:Dictionary = {
 		"SpawnerID": StringName("SpawnA"),
 		"Spawn_Rate_Seconds_float": float(1.5),
 		"Belt_Obj_Sequence_array": [],
-		"Belt_Obj1_enum": On_Belt_Object.enum_belt_object_type.REFINED,
-		"Belt_Obj2_enum": On_Belt_Object.enum_belt_object_type.DEFECT}
+		"Belt_Obj1_enum": On_Belt_Object.enum_belt_object_type.DEMON,
+		"Belt_Obj2_enum": On_Belt_Object.enum_belt_object_type.HOLY}
 		
 var Spawn_Sequence_B_WAVE3:Dictionary = {
 		"SpawnerID": StringName("SpawnB"),
 		"Spawn_Rate_Seconds_float": float(1.5),
 		"Belt_Obj_Sequence_array": [],
-		"Belt_Obj1_enum": On_Belt_Object.enum_belt_object_type.REFINED,
-		"Belt_Obj2_enum": On_Belt_Object.enum_belt_object_type.DEFECT}
+		"Belt_Obj1_enum": On_Belt_Object.enum_belt_object_type.DEMON,
+		"Belt_Obj2_enum": On_Belt_Object.enum_belt_object_type.HOLY}
 
 
 
@@ -107,6 +103,7 @@ func _ready():
 enum enum_player_path {UNDEF, BURN, NORMAL, PERFECT}
 var player_path:enum_player_path = enum_player_path.UNDEF
 
+var game_state:int = 0 #OVERRIDE HERE FOR SKIPPING PHASES FOR DEBUGGING
 
 var time:float = 0.0
 
@@ -117,6 +114,11 @@ var state_timer_reset:bool = false
 var dialog_timer:float = 0.0
 var dialog_state:int = 0
 var dialog_timer_waiting:bool = false
+
+var wave_2_burn_dialog:int = 0  # need this out here to keep it out of local scope.
+# I'm sure If I made a dialog class with local variables I could avoid hacks like this
+
+var wave_3_burn_dialog:int = 0 
 
 
 func _physics_process(delta):
@@ -265,7 +267,7 @@ func _physics_process(delta):
 							enum_player_path.NORMAL:
 								Character_Dialog_Pane.display_text_sequential("You did Good, I think you're getting the hang of it",0.05)
 							enum_player_path.BURN:
-								Character_Dialog_Pane.display_text_sequential("You burned so many.. The flames.. I think.. we should burn more",0.05)
+								Character_Dialog_Pane.display_text_sequential("You burned so many.. The flames.. I feel.. like we should burn more",0.05)
 							enum_player_path.PERFECT:
 								Character_Dialog_Pane.display_text_sequential("That was Perfect! Good Job!",0.05)
 						dialog_timer_waiting = true
@@ -282,7 +284,7 @@ func _physics_process(delta):
 			# Continue PERFECT path by sorting all donuts perfectly.
 			#Spawn_Sequence_A_WAVE2
 			#Spawn_Sequence_B_WAVE2
-			var burn_dialog = 0 #(something special so we can have multiple burn dialogs.)
+			 #(something special so we can have multiple burn dialogs.)
 			if state_timer_reset == false:
 				state_timer = 0.0
 				state_timer_reset = true
@@ -290,6 +292,7 @@ func _physics_process(delta):
 				dialog_timer = 0.0
 				dialog_state = 0
 				dialog_timer_waiting = false
+				wave_2_burn_dialog = 0
 				 
 			
 			match dialog_state:
@@ -304,7 +307,7 @@ func _physics_process(delta):
 						
 				1: #GAME WAVE2 State
 					if dialog_timer > 0.1 and dialog_timer_waiting == false:
-						Character_Dialog_Pane.display_text_sequential("Oh, These are Awful, try to pick out the good ones",0.05)
+						Character_Dialog_Pane.display_text_sequential("Oh, These are Awful,",0.05)
 						Spawn_Sequence_A_WAVE2["Belt_Obj_Sequence_array"] = generate_random_pattern_2_objs(24,6)
 						EventBus.trigger_event("Start_Scripted_Spawn_Sequence", Spawn_Sequence_A_WAVE2)
 						Spawn_Sequence_B_WAVE2["Belt_Obj_Sequence_array"] = generate_random_pattern_2_objs(24,6)
@@ -317,15 +320,15 @@ func _physics_process(delta):
 						player_path = enum_player_path.NORMAL
 						
 					#if player has been burning too many donuts, they stay on the "Burn path" and a short dialog plays
-					if (player_path == enum_player_path.BURN) and (burn_dialog == 0) and (Despawned_Items_Record["Incinerator"]["REFINED"]+Despawned_Items_Record["Incinerator"]["DEFECT"] > 15) and (dialog_timer_waiting == true):
+					if (player_path == enum_player_path.BURN) and (wave_2_burn_dialog == 0) and (Despawned_Items_Record["Incinerator"]["REFINED"]+Despawned_Items_Record["Incinerator"]["DEFECT"] > 15) and (dialog_timer_waiting == true):
 						Character_Dialog_Pane.display_text_sequential("ahh, good, good! the flames! the flames rise!",0.05)
-						burn_dialog = 1
-					elif (player_path == enum_player_path.BURN) and (burn_dialog == 1) and (Despawned_Items_Record["Incinerator"]["REFINED"]+Despawned_Items_Record["Incinerator"]["DEFECT"] > 30) and (dialog_timer_waiting == true):
+						wave_2_burn_dialog = 1
+					elif (player_path == enum_player_path.BURN) and (wave_2_burn_dialog == 1) and (Despawned_Items_Record["Incinerator"]["REFINED"]+Despawned_Items_Record["Incinerator"]["DEFECT"] > 30) and (dialog_timer_waiting == true):
 						Character_Dialog_Pane.display_text_sequential("HaHaHaHa!, YES! KEEP BURNING!",0.05)
-						burn_dialog = 2
-					elif (player_path == enum_player_path.BURN) and (burn_dialog == 2) and (Despawned_Items_Record["Incinerator"]["REFINED"]+Despawned_Items_Record["Incinerator"]["DEFECT"] > 50) and (dialog_timer_waiting == true):
-						Character_Dialog_Pane.display_text_sequential("HaHaHaHa!, YES! KEEP BURNING!",0.05)
-						burn_dialog = 3
+						wave_2_burn_dialog = 2
+					elif (player_path == enum_player_path.BURN) and (wave_2_burn_dialog == 2) and (Despawned_Items_Record["Incinerator"]["REFINED"]+Despawned_Items_Record["Incinerator"]["DEFECT"] > 50) and (dialog_timer_waiting == true):
+						Character_Dialog_Pane.display_text_sequential("KEEP BURNING! KEEP BURNING! His Armies Shall Rise!",0.05)
+						wave_2_burn_dialog = 3
 						
 					if (self.total_despawned_items() == 60) and (dialog_timer_waiting == true) and ("SpawnB" in Spawn_Sequences_Completed) and ("SpawnA" in Spawn_Sequences_Completed):
 						
@@ -354,10 +357,8 @@ func _physics_process(delta):
 						state_timer_reset = false
 						game_state = 3
 						
-		3: #Game Wave 3 (36 total, 20 cats, 16 dogs)
-			#	FAIL BURN path by sparing EVEN A SINGLE ANIMAL
-			#  Continue Normal path 
-			#	FAIL PERFECT path by BURINING EVEN A SINGLE ANIMAL
+		3: #Game Wave 3 (36 total, 20 demons, 16 holy donuts
+
 			#Spawn_Sequence_A_WAVE3
 			#Spawn_Sequence_B_WAVE3
 			if state_timer_reset == false:
@@ -368,20 +369,157 @@ func _physics_process(delta):
 				dialog_state = 0
 				dialog_timer_waiting = false
 				
-			
+				
+			match dialog_state:
+				0: #Sequential State
+					if dialog_timer > 0.1 and dialog_timer_waiting == false:
+						Character_Dialog_Pane.display_text_sequential("The kitchen.. is having.. an exorcism!",0.05)
+						dialog_timer_waiting = true
+					if dialog_timer > 5.0 and dialog_timer_waiting == true:
+						dialog_timer_waiting = false
+						dialog_timer = 0.0
+						dialog_state += 1
+						
+				1: #GAME WAVE2 State
+					if dialog_timer > 0.1 and dialog_timer_waiting == false:
+						
+						match player_path:
+							enum_player_path.UNDEF:
+								Character_Dialog_Pane.display_text_sequential("THIS IS AN ERROR enum_player_path.UNDEF ",0.05)
+							enum_player_path.NORMAL:
+								Character_Dialog_Pane.display_text_sequential("Oh, These are Unholy! Burn those monsters and save the holy donuts! we might just survive!",0.05)
+							enum_player_path.BURN:
+								Character_Dialog_Pane.display_text_sequential("OUR. TIME. HAS. COME! BURN. THE. HOLY. DONUTS. AND. GREET. OUR. LORD'S. ARMIES.",0.05)
+							enum_player_path.PERFECT:
+								Character_Dialog_Pane.display_text_sequential("I Believe in You! Burn those monsters and save the holy donuts! that will stop them for good!",0.05)
+						
+						
+						Spawn_Sequence_A_WAVE3["Belt_Obj_Sequence_array"] = generate_random_pattern_2_objs(20,10)
+						EventBus.trigger_event("Start_Scripted_Spawn_Sequence", Spawn_Sequence_A_WAVE3)
+						Spawn_Sequence_B_WAVE3["Belt_Obj_Sequence_array"] = generate_random_pattern_2_objs(20,10)
+						EventBus.trigger_event("Start_Scripted_Spawn_Sequence", Spawn_Sequence_B_WAVE3)
+						dialog_timer_waiting = true
+						
+					#if player has made a mistake, they are put on the "Normal path" and a short dialog plays
+					if (player_path == enum_player_path.PERFECT) and ((Despawned_Items_Record["GoodDepot"]["DEMON"] > 0) or (Despawned_Items_Record["Incinerator"]["HOLY"] > 0)) and (dialog_timer_waiting == true):
+						Character_Dialog_Pane.display_text_sequential("Oops, Looks like you missed one",0.05)
+						player_path = enum_player_path.NORMAL
+						
+
+					#if player has been burning too many donuts, they stay on the "Burn path" and a short dialog plays
+					if (player_path == enum_player_path.BURN) and (wave_3_burn_dialog == 0) and (Despawned_Items_Record["Incinerator"]["HOLY"] > 6) and (dialog_timer_waiting == true):
+						Character_Dialog_Pane.display_text_sequential("YES. YESS. WE. WILL. TAKE. OVER. THE. WORLD!",0.05)
+						wave_3_burn_dialog = 1
+					#if player has been burning too many donuts, they stay on the "Burn path" and a short dialog plays
+					elif (player_path == enum_player_path.BURN) and (wave_3_burn_dialog == 1) and (Despawned_Items_Record["Incinerator"]["HOLY"] > 12) and (dialog_timer_waiting == true):
+						Character_Dialog_Pane.display_text_sequential("OUR. RULE. IS. ASSURED. CONTINUE. IN. HIS. NAME!",0.05)
+						wave_3_burn_dialog = 2
+						
+						
+					if (player_path == enum_player_path.BURN) and (wave_3_burn_dialog == 0) and (Despawned_Items_Record["Incinerator"]["DEMON"] > 6) and (dialog_timer_waiting == true):
+						Character_Dialog_Pane.display_text_sequential("What. Are. You. Doing? YOU. TRAITOR!",0.05)
+						wave_3_burn_dialog = -1
+						
+					if (player_path == enum_player_path.BURN) and (wave_3_burn_dialog == -1) and (Despawned_Items_Record["Incinerator"]["DEMON"] > 30) and (dialog_timer_waiting == true):
+						Character_Dialog_Pane.display_text_sequential("Nooo! HIs. woRk. tArNisheD! mY. poWeR. WeAkens.",0.05)
+						wave_3_burn_dialog = -2
+						
+						
+						
+					if (self.total_despawned_items() == 60) and (dialog_timer_waiting == true) and ("SpawnB" in Spawn_Sequences_Completed) and ("SpawnA" in Spawn_Sequences_Completed):
+						
+						#if neither Normal or Burn conditions and you're here, you must be perfect!
+						#no need for any new conditionals, they are either still perfect or dropped grades
+						self.reset_despawned_items_counts()
+						Spawn_Sequences_Completed = []
+						dialog_timer_waiting = false
+						dialog_timer = 0.0
+						dialog_state += 1
+						
+				2: #Sequential State
+					if dialog_timer > 0.1 and dialog_timer_waiting == false:
+						match player_path:
+							enum_player_path.UNDEF:
+								Character_Dialog_Pane.display_text_sequential("THIS IS AN ERROR enum_player_path.UNDEF ",0.05)
+							enum_player_path.NORMAL:
+								Character_Dialog_Pane.display_text_sequential("Well, I bet the Factory will be closed down after all that.. Good Riddance, we aren't paid enough to deal with this $#!&",0.05)
+							enum_player_path.BURN:
+								if wave_3_burn_dialog == -2:
+									Character_Dialog_Pane.display_text_sequential("You.. yOU. RuIned. EvERYtHinG! HE sUmmonS mE To reTurn. tO. THE FLAMES!! AGHHHH! *pop",0.05)
+								elif wave_3_burn_dialog == 2:
+									Character_Dialog_Pane.display_text_sequential("HIS. WORK. IS. COMPLETE. OUR. ARMIES. STAND. READY. HURRAHH! ",0.05)
+							enum_player_path.PERFECT:
+								Character_Dialog_Pane.display_text_sequential("You did Everything Perfectly! I Know this Factory will be closed down soon.. Can I come work for you?",0.05)
+						dialog_timer_waiting = true
+					if dialog_timer > 10.0 and dialog_timer_waiting == true:
+						dialog_timer_waiting = false
+						state_timer_reset = false
+						game_state = 4
+		4:
+			if state_timer_reset == false:
+				state_timer = 0.0
+				state_timer_reset = true
+				
+				dialog_timer = 0.0
+				dialog_state = 0
+				dialog_timer_waiting = false
+				
+			match dialog_state:
+				0: #Sequential State
+					if dialog_timer > 0.1 and dialog_timer_waiting == false:
+						Character_Dialog_Pane.display_text_sequential(" \"Hello! Thank You For Playing My Game!\" ",0.05)
+						dialog_timer_waiting = true
+					if dialog_timer > 5.0 and dialog_timer_waiting == true:
+						dialog_timer_waiting = false
+						dialog_timer = 0.0
+						dialog_state += 1
+						
+				1: #Sequential State
+					if dialog_timer > 0.1 and dialog_timer_waiting == false:
+						match player_path:
+							enum_player_path.UNDEF:
+								Character_Dialog_Pane.display_text_sequential("THIS IS AN ERROR enum_player_path.UNDEF ",0.05)
+							enum_player_path.NORMAL:
+								Character_Dialog_Pane.display_text_sequential(" \"You've just Beaten the [NORMAL],PERFECT,BURN,TRAITOR Route!\" ",0.05)
+							enum_player_path.BURN:
+								if wave_3_burn_dialog == -2:
+									Character_Dialog_Pane.display_text_sequential(" \"You've just Beaten the NORMAL,PERFECT,BURN,[TRAITOR] Route!\" ",0.05)
+								elif wave_3_burn_dialog == 2:
+									Character_Dialog_Pane.display_text_sequential(" \"You've just Beaten the NORMAL,PERFECT,[BURN],TRAITOR Route!\" ",0.05)
+							enum_player_path.PERFECT:
+								Character_Dialog_Pane.display_text_sequential(" \"You've just Beaten the NORMAL,[PERFECT],BURN,TRAITOR Route!\" ",0.05)
+						dialog_timer_waiting = true
+					if dialog_timer > 8.0 and dialog_timer_waiting == true:
+						dialog_timer_waiting = false
+						dialog_timer = 0.0
+						dialog_state += 1
+				2: #Sequential State
+					if dialog_timer > 0.1 and dialog_timer_waiting == false:
+						Character_Dialog_Pane.display_text_sequential(" \"I Hope You Liked It! Goodbye!\" ",0.05)
+						dialog_timer_waiting = true
+					if dialog_timer > 8.0 and dialog_timer_waiting == true:
+						dialog_timer_waiting = false
+						dialog_timer = 0.0
+						dialog_state += 1
+				3: #Sequential State
+					get_tree().quit()
+
 
 
 #helper functions for the despawned_items_record, as it's not as managable line by line.
 #this goes heavily against modularity and future expansion.. but it's a game jam and I'm running out of time
 func total_despawned_items()->int:
-	return (Despawned_Items_Record["GoodDepot"]["REFINED"] + Despawned_Items_Record["GoodDepot"]["DEFECT"] + Despawned_Items_Record["Incinerator"]["REFINED"] + Despawned_Items_Record["Incinerator"]["DEFECT"])
+	return (Despawned_Items_Record["GoodDepot"]["REFINED"] + Despawned_Items_Record["GoodDepot"]["DEFECT"] + Despawned_Items_Record["GoodDepot"]["DEMON"] + Despawned_Items_Record["GoodDepot"]["HOLY"] + Despawned_Items_Record["Incinerator"]["REFINED"] + Despawned_Items_Record["Incinerator"]["DEFECT"] + Despawned_Items_Record["Incinerator"]["DEMON"] + Despawned_Items_Record["Incinerator"]["HOLY"])
 
 func reset_despawned_items_counts()->void:
 	Despawned_Items_Record["GoodDepot"]["REFINED"] = 0
 	Despawned_Items_Record["GoodDepot"]["DEFECT"] = 0
+	Despawned_Items_Record["GoodDepot"]["DEMON"] = 0
+	Despawned_Items_Record["GoodDepot"]["HOLY"] = 0
 	Despawned_Items_Record["Incinerator"]["REFINED"] = 0
 	Despawned_Items_Record["Incinerator"]["DEFECT"] = 0
-	
+	Despawned_Items_Record["Incinerator"]["DEMON"] = 0
+	Despawned_Items_Record["Incinerator"]["HOLY"] = 0
 	
 
 func generate_random_pattern_2_objs(common_quantity:int, rare_quantity:int):

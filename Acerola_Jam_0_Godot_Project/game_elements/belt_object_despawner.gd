@@ -22,6 +22,10 @@ func _on_death_path_child_entered_tree(node):
 				obj_type_name = "REFINED"
 			On_Belt_Object.enum_belt_object_type.DEFECT:
 				obj_type_name = "DEFECT"
+			On_Belt_Object.enum_belt_object_type.DEMON:
+				obj_type_name = "DEMON"
+			On_Belt_Object.enum_belt_object_type.HOLY:
+				obj_type_name = "HOLY"
 				
 		var despawn_dict:Dictionary = {
 			"DespawnerID":DespawnerID,
