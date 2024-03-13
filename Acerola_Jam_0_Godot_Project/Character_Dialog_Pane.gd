@@ -1,6 +1,6 @@
 extends Control
 
-@onready var Dialog_Text = $HBoxContainer/Dialog_Text_Label
+@onready var Dialog_Text = $TextureRect/Dialog_Text_Label_Container/Dialog_Text_Label
 
 @export var Character_Delay_Seconds:float = 0.25
 

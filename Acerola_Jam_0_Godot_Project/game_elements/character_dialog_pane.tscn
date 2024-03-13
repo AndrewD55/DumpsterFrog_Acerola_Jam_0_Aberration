@@ -1,7 +1,86 @@
-[gd_scene load_steps=4 format=3 uid="uid://8mfkrgs4lrgn"]
+[gd_scene load_steps=16 format=3 uid="uid://8mfkrgs4lrgn"]
 
 [ext_resource type="Script" path="res://Character_Dialog_Pane.gd" id="1_4tido"]
-[ext_resource type="Texture2D" uid="uid://clyrtms0yfxmj" path="res://2D_Media/Sprites/Mouseover_Highlight_V0_Green.png" id="2_8w008"]
+[ext_resource type="Texture2D" uid="uid://db8myij4kjrr5" path="res://2D_Media/Sprites/DialogBox_V1.png" id="2_1qylp"]
+[ext_resource type="Texture2D" uid="uid://gl0ut3msleg0" path="res://2D_Media/Sprites/Inspector_Sprite_Sheet_V0.png" id="3_no0ao"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u02tn"]
+atlas = ExtResource("3_no0ao")
+region = Rect2(1, 1, 86, 86)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cexhi"]
+atlas = ExtResource("3_no0ao")
+region = Rect2(89, 1, 86, 86)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pphwc"]
+atlas = ExtResource("3_no0ao")
+region = Rect2(177, 1, 86, 86)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vyw2n"]
+atlas = ExtResource("3_no0ao")
+region = Rect2(265, 1, 86, 86)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_782cp"]
+atlas = ExtResource("3_no0ao")
+region = Rect2(353, 1, 86, 86)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hjus1"]
+atlas = ExtResource("3_no0ao")
+region = Rect2(441, 1, 86, 86)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oyfhs"]
+atlas = ExtResource("3_no0ao")
+region = Rect2(529, 1, 86, 86)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v8ml1"]
+atlas = ExtResource("3_no0ao")
+region = Rect2(617, 1, 86, 86)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wgu05"]
+atlas = ExtResource("3_no0ao")
+region = Rect2(705, 1, 86, 86)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6b64m"]
+atlas = ExtResource("3_no0ao")
+region = Rect2(793, 1, 86, 86)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_qyyr5"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u02tn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cexhi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pphwc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vyw2n")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_782cp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hjus1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_oyfhs")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v8ml1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wgu05")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6b64m")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
 
 [sub_resource type="LabelSettings" id="LabelSettings_ya8wq"]
 
@@ -15,34 +94,46 @@ grow_vertical = 2
 mouse_filter = 1
 script = ExtResource("1_4tido")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("2_1qylp")
+
+[node name="Portrait_Container" type="Control" parent="TextureRect"]
+custom_minimum_size = Vector2(86, 86)
 layout_mode = 1
-anchors_preset = 10
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
 anchor_right = 1.0
-offset_bottom = 100.0
+anchor_bottom = 0.5
+offset_left = -94.0
+offset_top = -44.0
+offset_right = -6.0
+offset_bottom = 44.0
+grow_horizontal = 0
+grow_vertical = 2
+size_flags_horizontal = 8
+
+[node name="Sprite2D" type="AnimatedSprite2D" parent="TextureRect/Portrait_Container"]
+position = Vector2(43, 45)
+sprite_frames = SubResource("SpriteFrames_qyyr5")
+
+[node name="Dialog_Text_Label_Container" type="Control" parent="TextureRect"]
+anchors_preset = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 612.0
+offset_bottom = 92.0
+
+[node name="Dialog_Text_Label" type="Label" parent="TextureRect/Dialog_Text_Label_Container"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
-alignment = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
-custom_minimum_size = Vector2(100, 100)
-layout_mode = 2
-
-[node name="Goal_1" type="Label" parent="HBoxContainer/VBoxContainer"]
-layout_mode = 2
-
-[node name="Goal_2" type="Label" parent="HBoxContainer/VBoxContainer"]
-layout_mode = 2
-
-[node name="Goal_3" type="Label" parent="HBoxContainer/VBoxContainer"]
-layout_mode = 2
-
-[node name="Dialog_Text_Label" type="Label" parent="HBoxContainer"]
-custom_minimum_size = Vector2(500, 100)
-layout_mode = 2
+grow_vertical = 2
+size_flags_horizontal = 4
 label_settings = SubResource("LabelSettings_ya8wq")
 autowrap_mode = 2
-
-[node name="TextureRect" type="TextureRect" parent="HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 8
-texture = ExtResource("2_8w008")

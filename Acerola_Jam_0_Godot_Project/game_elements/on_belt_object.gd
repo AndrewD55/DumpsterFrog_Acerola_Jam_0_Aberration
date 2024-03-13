@@ -6,7 +6,7 @@ class_name On_Belt_Object
 
 enum enum_belt_object_type {REFINED, DEFECT, DEMON, HOLY}
 
-var Good_Product = preload("res://3D_Media/Good_Product/Good_Donut_V0.glb").instantiate()
+var Good_Product = preload("res://3D_Media/Good_Product/Good_Donut_V1.glb").instantiate()
 var Bad_Product = preload("res://3D_Media/Bad_Product/Bad_Donut_V0.glb").instantiate()
 
 @export var initial_object_type:enum_belt_object_type=enum_belt_object_type.REFINED
