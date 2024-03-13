@@ -20,6 +20,14 @@ config/icon="res://icon.svg"
 AutoloadEventBus="*res://autoload_scripts/autoload_event_bus.gd"
 AutoloadSceneSwap="*res://autoload_scripts/autoload_scene_swap.gd"
 
+[display]
+
+window/size/viewport_width=720
+window/size/viewport_height=480
+window/size/mode=2
+window/stretch/mode="viewport"
+window/stretch/scale_mode="integer"
+
 [layer_names]
 
 3d_physics/layer_1="All"
