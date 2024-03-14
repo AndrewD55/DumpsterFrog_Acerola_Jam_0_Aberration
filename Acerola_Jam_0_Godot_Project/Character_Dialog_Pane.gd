@@ -32,4 +32,5 @@ func display_text_sequential(sequential_text:String, character_delay_seconds:flo
 		sequential_text_char_array.append(character)
 	
 func clear_text():
+	sequential_text_char_array = []
 	Dialog_Text.text = ""

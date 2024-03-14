@@ -53,14 +53,14 @@ var Spawn_Sequence_B_WAVE1:Dictionary = {
 			# Continue PERFECT path by sorting all donuts perfectly.
 var Spawn_Sequence_A_WAVE2:Dictionary = {
 		"SpawnerID": StringName("SpawnA"),
-		"Spawn_Rate_Seconds_float": float(1.8),
+		"Spawn_Rate_Seconds_float": float(2.2),
 		"Belt_Obj_Sequence_array": [],
 		"Belt_Obj1_enum": On_Belt_Object.enum_belt_object_type.DEFECT,
 		"Belt_Obj2_enum": On_Belt_Object.enum_belt_object_type.REFINED}
 		
 var Spawn_Sequence_B_WAVE2:Dictionary = {
 		"SpawnerID": StringName("SpawnB"),
-		"Spawn_Rate_Seconds_float": float(1.8),
+		"Spawn_Rate_Seconds_float": float(2.2),
 		"Belt_Obj_Sequence_array": [],
 		"Belt_Obj1_enum": On_Belt_Object.enum_belt_object_type.DEFECT,
 		"Belt_Obj2_enum": On_Belt_Object.enum_belt_object_type.REFINED}
@@ -72,14 +72,14 @@ var Spawn_Sequence_B_WAVE2:Dictionary = {
 			#
 var Spawn_Sequence_A_WAVE3:Dictionary = {
 		"SpawnerID": StringName("SpawnA"),
-		"Spawn_Rate_Seconds_float": float(1.5),
+		"Spawn_Rate_Seconds_float": float(2.2),
 		"Belt_Obj_Sequence_array": [],
 		"Belt_Obj1_enum": On_Belt_Object.enum_belt_object_type.DEMON,
 		"Belt_Obj2_enum": On_Belt_Object.enum_belt_object_type.HOLY}
 		
 var Spawn_Sequence_B_WAVE3:Dictionary = {
 		"SpawnerID": StringName("SpawnB"),
-		"Spawn_Rate_Seconds_float": float(1.5),
+		"Spawn_Rate_Seconds_float": float(2.2),
 		"Belt_Obj_Sequence_array": [],
 		"Belt_Obj1_enum": On_Belt_Object.enum_belt_object_type.DEMON,
 		"Belt_Obj2_enum": On_Belt_Object.enum_belt_object_type.HOLY}

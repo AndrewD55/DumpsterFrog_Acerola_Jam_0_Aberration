@@ -8,8 +8,25 @@ class_name Belt_Object_Despawner
 @export var DespawnerID:StringName="undef"
 
 
+enum enum_despawn_model {INCINERATOR, PACKAGER}
+var Incinerator_Model = preload("res://3D_Media/Despawn_Incinerator/Incinerator_V0.glb").instantiate()
+var Packager_Model = preload("res://3D_Media/Despawn_Packager/Packager_V0.glb").instantiate()
+
+@export var despawner_model:enum_despawn_model=enum_despawn_model.INCINERATOR
+
 @onready var Despawn_Shute = $Despawn_Shute
 @onready var Death_Path = $Death_Path
+
+
+func _ready():
+	match despawner_model:
+		enum_despawn_model.INCINERATOR:
+			self.add_child(Incinerator_Model)
+			
+		enum_despawn_model.PACKAGER:
+			self.add_child(Packager_Model)
+	
+
 
 func get_despawner_entrance()->Path3D: #other linked paths will call this. #return our linked path
 	return Despawn_Shute

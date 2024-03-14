@@ -7,7 +7,9 @@ class_name On_Belt_Object
 enum enum_belt_object_type {REFINED, DEFECT, DEMON, HOLY}
 
 var Good_Product = preload("res://3D_Media/Good_Product/Good_Donut_V1.glb").instantiate()
-var Bad_Product = preload("res://3D_Media/Bad_Product/Bad_Donut_V0.glb").instantiate()
+var Bad_Product = preload("res://3D_Media/Bad_Product/Bad_Donut_V1.glb").instantiate()
+var Demon_Product = preload("res://3D_Media/Demon_Product/Demon_Donut_V0.glb").instantiate()
+var Holy_Product = preload("res://3D_Media/Holy_Product/Holy_Donut_V0.glb").instantiate()
 
 @export var initial_object_type:enum_belt_object_type=enum_belt_object_type.REFINED
 @export var initial_velocity:float=0.0
@@ -36,10 +38,10 @@ func _ready():
 			self.add_child(Good_Product)
 		enum_belt_object_type.DEFECT:
 			self.add_child(Bad_Product)
-		enum_belt_object_type.DEMON:    ##UPDATE THESE TO NEW MODELS ONCE LOGIC IS SOUND
-			self.add_child(Bad_Product)
+		enum_belt_object_type.DEMON:
+			self.add_child(Demon_Product)
 		enum_belt_object_type.HOLY:
-			self.add_child(Good_Product)
+			self.add_child(Holy_Product)
 
 
 func _physics_process(delta):

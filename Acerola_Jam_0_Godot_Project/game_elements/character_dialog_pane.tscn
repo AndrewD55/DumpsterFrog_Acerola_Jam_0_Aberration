@@ -83,6 +83,7 @@ animations = [{
 }]
 
 [sub_resource type="LabelSettings" id="LabelSettings_ya8wq"]
+font_color = Color(0.286275, 0.352941, 0.215686, 1)
 
 [node name="Character_Dialog_Pane" type="Control"]
 layout_mode = 3
