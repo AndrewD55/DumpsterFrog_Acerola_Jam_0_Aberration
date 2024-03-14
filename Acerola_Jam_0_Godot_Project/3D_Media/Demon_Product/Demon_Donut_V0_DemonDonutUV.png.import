@@ -3,20 +3,21 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ddyjso52a2ita"
-path="res://.godot/imported/Demon_Donut_V0_DemonDonutUV.png-5466606ba51741945da1697541b23d52.ctex"
+path.s3tc="res://.godot/imported/Demon_Donut_V0_DemonDonutUV.png-5466606ba51741945da1697541b23d52.s3tc.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
 }
 generator_parameters={}
 
 [deps]
 
 source_file="res://3D_Media/Demon_Product/Demon_Donut_V0_DemonDonutUV.png"
-dest_files=["res://.godot/imported/Demon_Donut_V0_DemonDonutUV.png-5466606ba51741945da1697541b23d52.ctex"]
+dest_files=["res://.godot/imported/Demon_Donut_V0_DemonDonutUV.png-5466606ba51741945da1697541b23d52.s3tc.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/hdr_compression=1
@@ -32,4 +33,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=1
+detect_3d/compress_to=0
