@@ -1,6 +1,7 @@
 extends Control
 
 @onready var Dialog_Text = $TextureRect/Dialog_Text_Label_Container/Dialog_Text_Label
+@onready var Inspector_Animated_Sprite = $TextureRect/Portrait_Container/Sprite2D
 
 @export var Character_Delay_Seconds:float = 0.25
 
@@ -34,3 +35,7 @@ func display_text_sequential(sequential_text:String, character_delay_seconds:flo
 func clear_text():
 	sequential_text_char_array = []
 	Dialog_Text.text = ""
+	
+	
+func change_inspector_face(frame_num:int):
+	Inspector_Animated_Sprite.frame = frame_num
